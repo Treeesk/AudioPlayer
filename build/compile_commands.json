@@ -1,0 +1,8 @@
+[
+{
+  "directory": "/Applications/AudioPlayer/build",
+  "command": "/usr/bin/clang++  -I/opt/homebrew/opt/ffmpeg/include -F/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks -g -std=gnu++20 -arch arm64 -o CMakeFiles/AudioPlayer.dir/main.cpp.o -c /Applications/AudioPlayer/main.cpp",
+  "file": "/Applications/AudioPlayer/main.cpp",
+  "output": "CMakeFiles/AudioPlayer.dir/main.cpp.o"
+}
+]
