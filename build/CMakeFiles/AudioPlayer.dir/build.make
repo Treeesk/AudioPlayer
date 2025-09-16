@@ -72,35 +72,51 @@ include CMakeFiles/AudioPlayer.dir/flags.make
 CMakeFiles/AudioPlayer.dir/codegen:
 .PHONY : CMakeFiles/AudioPlayer.dir/codegen
 
-CMakeFiles/AudioPlayer.dir/main.cpp.o: CMakeFiles/AudioPlayer.dir/flags.make
-CMakeFiles/AudioPlayer.dir/main.cpp.o: /Applications/AudioPlayer/main.cpp
-CMakeFiles/AudioPlayer.dir/main.cpp.o: CMakeFiles/AudioPlayer.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Applications/AudioPlayer/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/AudioPlayer.dir/main.cpp.o"
-	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/AudioPlayer.dir/main.cpp.o -MF CMakeFiles/AudioPlayer.dir/main.cpp.o.d -o CMakeFiles/AudioPlayer.dir/main.cpp.o -c /Applications/AudioPlayer/main.cpp
+CMakeFiles/AudioPlayer.dir/core/main.cpp.o: CMakeFiles/AudioPlayer.dir/flags.make
+CMakeFiles/AudioPlayer.dir/core/main.cpp.o: /Applications/AudioPlayer/core/main.cpp
+CMakeFiles/AudioPlayer.dir/core/main.cpp.o: CMakeFiles/AudioPlayer.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Applications/AudioPlayer/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/AudioPlayer.dir/core/main.cpp.o"
+	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/AudioPlayer.dir/core/main.cpp.o -MF CMakeFiles/AudioPlayer.dir/core/main.cpp.o.d -o CMakeFiles/AudioPlayer.dir/core/main.cpp.o -c /Applications/AudioPlayer/core/main.cpp
 
-CMakeFiles/AudioPlayer.dir/main.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/AudioPlayer.dir/main.cpp.i"
-	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Applications/AudioPlayer/main.cpp > CMakeFiles/AudioPlayer.dir/main.cpp.i
+CMakeFiles/AudioPlayer.dir/core/main.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/AudioPlayer.dir/core/main.cpp.i"
+	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Applications/AudioPlayer/core/main.cpp > CMakeFiles/AudioPlayer.dir/core/main.cpp.i
 
-CMakeFiles/AudioPlayer.dir/main.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/AudioPlayer.dir/main.cpp.s"
-	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Applications/AudioPlayer/main.cpp -o CMakeFiles/AudioPlayer.dir/main.cpp.s
+CMakeFiles/AudioPlayer.dir/core/main.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/AudioPlayer.dir/core/main.cpp.s"
+	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Applications/AudioPlayer/core/main.cpp -o CMakeFiles/AudioPlayer.dir/core/main.cpp.s
+
+CMakeFiles/AudioPlayer.dir/core/PlayAudio.cpp.o: CMakeFiles/AudioPlayer.dir/flags.make
+CMakeFiles/AudioPlayer.dir/core/PlayAudio.cpp.o: /Applications/AudioPlayer/core/PlayAudio.cpp
+CMakeFiles/AudioPlayer.dir/core/PlayAudio.cpp.o: CMakeFiles/AudioPlayer.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Applications/AudioPlayer/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/AudioPlayer.dir/core/PlayAudio.cpp.o"
+	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/AudioPlayer.dir/core/PlayAudio.cpp.o -MF CMakeFiles/AudioPlayer.dir/core/PlayAudio.cpp.o.d -o CMakeFiles/AudioPlayer.dir/core/PlayAudio.cpp.o -c /Applications/AudioPlayer/core/PlayAudio.cpp
+
+CMakeFiles/AudioPlayer.dir/core/PlayAudio.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/AudioPlayer.dir/core/PlayAudio.cpp.i"
+	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Applications/AudioPlayer/core/PlayAudio.cpp > CMakeFiles/AudioPlayer.dir/core/PlayAudio.cpp.i
+
+CMakeFiles/AudioPlayer.dir/core/PlayAudio.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/AudioPlayer.dir/core/PlayAudio.cpp.s"
+	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Applications/AudioPlayer/core/PlayAudio.cpp -o CMakeFiles/AudioPlayer.dir/core/PlayAudio.cpp.s
 
 # Object files for target AudioPlayer
 AudioPlayer_OBJECTS = \
-"CMakeFiles/AudioPlayer.dir/main.cpp.o"
+"CMakeFiles/AudioPlayer.dir/core/main.cpp.o" \
+"CMakeFiles/AudioPlayer.dir/core/PlayAudio.cpp.o"
 
 # External object files for target AudioPlayer
 AudioPlayer_EXTERNAL_OBJECTS =
 
-AudioPlayer: CMakeFiles/AudioPlayer.dir/main.cpp.o
+AudioPlayer: CMakeFiles/AudioPlayer.dir/core/main.cpp.o
+AudioPlayer: CMakeFiles/AudioPlayer.dir/core/PlayAudio.cpp.o
 AudioPlayer: CMakeFiles/AudioPlayer.dir/build.make
 AudioPlayer: /opt/homebrew/opt/ffmpeg/lib/libavcodec.dylib
 AudioPlayer: /opt/homebrew/opt/ffmpeg/lib/libavformat.dylib
 AudioPlayer: /opt/homebrew/opt/ffmpeg/lib/libavutil.dylib
 AudioPlayer: /opt/homebrew/opt/ffmpeg/lib/libswresample.dylib
 AudioPlayer: CMakeFiles/AudioPlayer.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Applications/AudioPlayer/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable AudioPlayer"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Applications/AudioPlayer/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX executable AudioPlayer"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/AudioPlayer.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

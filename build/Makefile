@@ -129,29 +129,53 @@ AudioPlayer/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/AudioPlayer.dir/build.make CMakeFiles/AudioPlayer.dir/build
 .PHONY : AudioPlayer/fast
 
-main.o: main.cpp.o
-.PHONY : main.o
+core/PlayAudio.o: core/PlayAudio.cpp.o
+.PHONY : core/PlayAudio.o
 
 # target to build an object file
-main.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AudioPlayer.dir/build.make CMakeFiles/AudioPlayer.dir/main.cpp.o
-.PHONY : main.cpp.o
+core/PlayAudio.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AudioPlayer.dir/build.make CMakeFiles/AudioPlayer.dir/core/PlayAudio.cpp.o
+.PHONY : core/PlayAudio.cpp.o
 
-main.i: main.cpp.i
-.PHONY : main.i
+core/PlayAudio.i: core/PlayAudio.cpp.i
+.PHONY : core/PlayAudio.i
 
 # target to preprocess a source file
-main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AudioPlayer.dir/build.make CMakeFiles/AudioPlayer.dir/main.cpp.i
-.PHONY : main.cpp.i
+core/PlayAudio.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AudioPlayer.dir/build.make CMakeFiles/AudioPlayer.dir/core/PlayAudio.cpp.i
+.PHONY : core/PlayAudio.cpp.i
 
-main.s: main.cpp.s
-.PHONY : main.s
+core/PlayAudio.s: core/PlayAudio.cpp.s
+.PHONY : core/PlayAudio.s
 
 # target to generate assembly for a file
-main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/AudioPlayer.dir/build.make CMakeFiles/AudioPlayer.dir/main.cpp.s
-.PHONY : main.cpp.s
+core/PlayAudio.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AudioPlayer.dir/build.make CMakeFiles/AudioPlayer.dir/core/PlayAudio.cpp.s
+.PHONY : core/PlayAudio.cpp.s
+
+core/main.o: core/main.cpp.o
+.PHONY : core/main.o
+
+# target to build an object file
+core/main.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AudioPlayer.dir/build.make CMakeFiles/AudioPlayer.dir/core/main.cpp.o
+.PHONY : core/main.cpp.o
+
+core/main.i: core/main.cpp.i
+.PHONY : core/main.i
+
+# target to preprocess a source file
+core/main.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AudioPlayer.dir/build.make CMakeFiles/AudioPlayer.dir/core/main.cpp.i
+.PHONY : core/main.cpp.i
+
+core/main.s: core/main.cpp.s
+.PHONY : core/main.s
+
+# target to generate assembly for a file
+core/main.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AudioPlayer.dir/build.make CMakeFiles/AudioPlayer.dir/core/main.cpp.s
+.PHONY : core/main.cpp.s
 
 # Help Target
 help:
@@ -162,9 +186,12 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... AudioPlayer"
-	@echo "... main.o"
-	@echo "... main.i"
-	@echo "... main.s"
+	@echo "... core/PlayAudio.o"
+	@echo "... core/PlayAudio.i"
+	@echo "... core/PlayAudio.s"
+	@echo "... core/main.o"
+	@echo "... core/main.i"
+	@echo "... core/main.s"
 .PHONY : help
 
 

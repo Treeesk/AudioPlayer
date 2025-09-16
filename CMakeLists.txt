@@ -11,7 +11,9 @@ set(FFMPEG_LIB_DIR "/opt/homebrew/opt/ffmpeg/lib")
 include_directories(${FFMPEG_INCLUDE_DIR})
 
 # Исходник
-add_executable(AudioPlayer main.cpp)
+add_executable(AudioPlayer core/main.cpp
+        core/PlayAudio.h
+        core/PlayAudio.cpp)
 
 # AudioToolbox - фреймворк, который внутри себя содержит и .h .dylib поэтому не нужно отдельно подключать заголовки
 find_library(AUDIOTOOLBOX_LIBRARY AudioToolbox) # поиск библиотеки с названием AudioToolbox
