@@ -1,3 +1,0 @@
-/Applications/AudioPlayer/build/CMakeFiles/AudioPlayer.dir
-/Applications/AudioPlayer/build/CMakeFiles/edit_cache.dir
-/Applications/AudioPlayer/build/CMakeFiles/rebuild_cache.dir
