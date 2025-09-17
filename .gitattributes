@@ -1,3 +1,0 @@
-# Игнорируем build-файлы cmake
-build/* linguist-vendored
-CMakeFiles/* linguist-vendored
