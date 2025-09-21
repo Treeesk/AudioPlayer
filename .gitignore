@@ -4,6 +4,8 @@
 /build/
 /cmake-build-*/
 /.idea/
+.DS_Store
+/.vscode
 # Editor-based HTTP Client requests
 /httpRequests/
 # Datasource local storage ignored files
