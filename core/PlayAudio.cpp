@@ -1,4 +1,16 @@
 #include "PlayAudio.h"
+#include "Errors.h"
+#include <iostream>
+#include <string>
+#include <queue>
+#include <vector>
+#include <mutex>
+extern "C" {
+#include <libavcodec/avcodec.h>
+#include <libavformat/avformat.h>
+#include <libavutil/avutil.h>
+#include <libswresample/swresample.h>
+}
 
 std::queue<std::vector<uint8_t>> que;
 std::mutex mtx;
@@ -41,32 +53,35 @@ void PlayPcm(AudioQueueRef& queue) {
     AudioQueueStart(queue, nullptr);
 }
 
-// Добавить коммент что возвращает
-int PlayAudio(const char* path) {
+void PlayAudio(const char* path) {
     AVFormatContext* fmt_ctx = nullptr;
-    if (avformat_open_input(&fmt_ctx, path, NULL, NULL) != 0) {
-        std::cerr << "Could not open AVFormat stream" << std::endl;
-        // добавить исключение вылетающее
-    }
+    int check_err;
+    check_err = avformat_open_input(&fmt_ctx, path, NULL, NULL);
+    averr_process(check_err);
     // получение подробной информации потоков(битрейт, частоту и тд.)
-    if (avformat_find_stream_info(fmt_ctx, nullptr) < 0) {
-        std::cerr << "Не удалось найти stream info" << std::endl;
-        return -1;
-    }
+    check_err = avformat_find_stream_info(fmt_ctx, 0);
+    averr_process(check_err);
     // поиск лучшего потока нужен, тк. необязательно у нас есть только аудио дорожка
     int stream_index = av_find_best_stream(fmt_ctx, AVMEDIA_TYPE_AUDIO, -1, -1, nullptr, 0);
-    if (stream_index < 0) {
-        std::cerr << "Аудиопоток не найден" << std::endl;
-        return -1;
-    }
+    averr_process(stream_index);
     // указатель на выбранный аудио поток
     AVStream* audio_stream = fmt_ctx->streams[stream_index];
 
     // Получаем декодер
-    const AVCodec* codec = avcodec_find_decoder(audio_stream->codecpar->codec_id);
-    AVCodecContext* codec_ctx = avcodec_alloc_context3(codec); // будет храниться состояние декодера(состояние потока, внутренние буфера и тд)
-    avcodec_parameters_to_context(codec_ctx, audio_stream->codecpar); // копирование параметров в контекст декодера
-    avcodec_open2(codec_ctx, codec, nullptr);
+    const AVCodec* codec;
+    if ((codec = avcodec_find_decoder(audio_stream->codecpar->codec_id)) == nullptr) {
+        throw PlayAudioErr("Could not find codec");
+    }
+    AVCodecContext* codec_ctx; // будет храниться состояние декодера(состояние потока, внутренние буфера и тд)
+    if ((codec_ctx = avcodec_alloc_context3(codec)) == nullptr) {
+        throw PlayAudioErr("Could not allocate audio codec context");
+    }
+    // копирование параметров в контекст декодера
+    check_err = avcodec_parameters_to_context(codec_ctx, audio_stream->codecpar);
+    averr_process(check_err);
+    if (avcodec_open2(codec_ctx, codec, nullptr) != 0) {
+        throw PlayAudioErr("Could not open codec");
+    }
 
     // audio resampling parametres (чтобы приводить все файлы к одному виду)
     SwrContext* swr_context = nullptr;
@@ -81,25 +96,39 @@ int PlayAudio(const char* path) {
         codec_ctx->sample_fmt,
         codec_ctx->sample_rate,
         0, nullptr);
-    swr_init(swr_context);
+    check_err = swr_init(swr_context);
+    averr_process(check_err);
 
     // создание буферов
-    AVPacket * pkt = av_packet_alloc(); // structure stores compressed data
-    AVFrame* frame = av_frame_alloc(); // structure describes decoded (raw) audio data
+    AVPacket * pkt; // structure stores compressed data
+    if ((pkt = av_packet_alloc()) == nullptr) {
+        throw PlayAudioErr("Could not allocate audio packet");
+    }
+    AVFrame* frame; // structure describes decoded (raw) audio data
+    if ((frame = av_frame_alloc()) == nullptr) {
+        throw PlayAudioErr("Could not allocate audio frame");
+    }
 
     AudioQueueRef queue;
     PlayPcm(queue); // запускаем сразу
 
     // цикл чтения файла
-    while (!av_read_frame(fmt_ctx, pkt)) {
+    while ((check_err = av_read_frame(fmt_ctx, pkt)) == 0) {
         if (pkt->stream_index == stream_index) {
-            avcodec_send_packet(codec_ctx, pkt);
-            while (!avcodec_receive_frame(codec_ctx, frame)) {
+            check_err = avcodec_send_packet(codec_ctx, pkt);
+            if (check_err < 0 && check_err != AVERROR_EOF && check_err != AVERROR(EAGAIN)) {
+                averr_process(check_err);
+            }
+            while (!(check_err = avcodec_receive_frame(codec_ctx, frame))) {
                 uint8_t* out_data;
                 int out_linesize;
-                av_samples_alloc(&out_data, &out_linesize, 2, frame->nb_samples, AV_SAMPLE_FMT_S16, 0);
-
+                if (av_samples_alloc(&out_data, &out_linesize, 2, frame->nb_samples, AV_SAMPLE_FMT_S16, 0) < 0) {
+                    throw PlayAudioErr("Could not allocate audio data(samples)");
+                }
                 int samples = swr_convert(swr_context, &out_data, frame->nb_samples, (const uint8_t**)frame->data, frame->nb_samples);
+                if (samples < 0) {
+                    throw PlayAudioErr("Could not convert audio data(samples)");
+                }
                 int buffer_size = samples * 2 * 2; // cnt_samples * channels * byte_per_sample
                 // разрезать на чанки по 4096 байт, т.к один буффер в queue будет содержать максимум 4096 байт
                 int chunk_size = 4096;
@@ -114,8 +143,14 @@ int PlayAudio(const char* path) {
                 }
                 av_freep(&out_data);
             }
+            if (check_err < 0 && check_err != AVERROR_EOF && check_err != AVERROR(EAGAIN)) {
+                averr_process(check_err);
+            }
         }
         av_packet_unref(pkt);
+    }
+    if (check_err != AVERROR_EOF) {
+        averr_process(check_err);
     }
 
     while (!que.empty()); // нужно не завершать работу main, чтобы mtx не пропал и Core Audio мог работать
@@ -128,7 +163,12 @@ int PlayAudio(const char* path) {
     swr_free(&swr_context);
     avcodec_free_context(&codec_ctx);
     avformat_close_input(&fmt_ctx);
+}
 
-
-    return 0; // изменить результат возвращаемый
+void averr_process(int err) {
+    if (err < 0) {
+        char errbuf[256];
+        av_strerror(err, errbuf, sizeof(errbuf));
+        throw PlayAudioErr(errbuf);
+    }
 }
