@@ -16,7 +16,6 @@ int main() {
     std::sort(paths_to_files.begin(), paths_to_files.end(), [](const std::filesystem::path& a, const std::filesystem::path& b) {
         return std::filesystem::last_write_time(a) < std::filesystem::last_write_time(b);
     });
-    paths_to_files.pop_front();
     try {
         while (!paths_to_files.empty()) {
             const char* path = paths_to_files.front().c_str();
