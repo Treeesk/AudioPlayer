@@ -15,6 +15,8 @@ add_executable(AudioPlayer core/main.cpp
         core/PlayAudio.h
         core/PlayAudio.cpp
         core/Errors.h
+        core/AudioFileLoader.h
+        core/AudioFileLoader.cpp
 )
 
 # AudioToolbox - фреймворк, который внутри себя содержит и .h .dylib поэтому не нужно отдельно подключать заголовки
