@@ -16,6 +16,7 @@ extern "C" {
 std::queue<std::vector<uint8_t>> que;
 std::mutex mtx;
 std::atomic<bool> finished = false; // чтобы не было гонки данных в момент записи в одном потоке и проверки в другом 
+bool callbackfinish = false;
 std::mutex end_track;
 std::condition_variable cv;
 
@@ -25,7 +26,7 @@ void AudioCallbackF(void* UserData, AudioQueueRef inAQ, AudioQueueBufferRef inBu
         memset(inBuffer->mAudioData, 0, inBuffer->mAudioDataBytesCapacity);
         inBuffer->mAudioDataByteSize = inBuffer->mAudioDataBytesCapacity;
         if (finished) {
-            finished = false;
+            callbackfinish = true;
             cv.notify_one();
         }
     } else {
@@ -164,7 +165,7 @@ void PlayAudio(const char* path) {
     // нужно не завершать работу, чтобы que не пропал и Core Audio мог работать
     finished = true;
     std::unique_lock lk(end_track);
-    cv.wait(lk, [] {return !finished;});
+    cv.wait(lk, [] {return callbackfinish;});
     AudioQueueStop(queue, false); // остановка и очистка структур, потенциально может пригодится, если будет много одновременно вызовов
     AudioQueueDispose(queue, true);
     // free memory
