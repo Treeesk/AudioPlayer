@@ -5,6 +5,7 @@
 #include <queue>
 #include <vector>
 #include <mutex>
+#include <condition_variable>
 extern "C" {
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
@@ -14,12 +15,19 @@ extern "C" {
 
 std::queue<std::vector<uint8_t>> que;
 std::mutex mtx;
+std::atomic<bool> finished = false; // чтобы не было гонки данных в момент записи в одном потоке и проверки в другом 
+std::mutex end_track;
+std::condition_variable cv;
 
 void AudioCallbackF(void* UserData, AudioQueueRef inAQ, AudioQueueBufferRef inBuffer) {
     std::lock_guard<std::mutex> lock(mtx);
     if (que.empty()) {
         memset(inBuffer->mAudioData, 0, inBuffer->mAudioDataBytesCapacity);
         inBuffer->mAudioDataByteSize = inBuffer->mAudioDataBytesCapacity;
+        if (finished) {
+            finished = false;
+            cv.notify_one();
+        }
     } else {
         auto& front = que.front();
         size_t bytes_copy = front.size();
@@ -153,8 +161,10 @@ void PlayAudio(const char* path) {
         averr_process(check_err);
     }
 
-    while (!que.empty()); // нужно не завершать работу main, чтобы mtx не пропал и Core Audio мог работать
-
+    // нужно не завершать работу, чтобы que не пропал и Core Audio мог работать
+    finished = true;
+    std::unique_lock lk(end_track);
+    cv.wait(lk, [] {return !finished;});
     AudioQueueStop(queue, false); // остановка и очистка структур, потенциально может пригодится, если будет много одновременно вызовов
     AudioQueueDispose(queue, true);
     // free memory
