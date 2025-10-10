@@ -98,6 +98,6 @@ track::track(std::string path) {
     }
 }
 
-void error_reproduct(std::string& pth){
+void track::error_reproduct(std::string& pth){
     throw std::runtime_error("Unsupported or invalid audio file: " + pth);
 }

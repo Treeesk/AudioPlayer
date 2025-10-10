@@ -11,7 +11,8 @@ int main(int argc, char *argv[])
 {
     const char* path_to_dir = "/Users/yarchick/AudioPlayerQt/testingmp3mus";
     std::deque<std::filesystem::path> paths_to_files = GetAudioFiles(path_to_dir);
-    QVector<track> tracks(paths_to_files.size());
+    QVector<track> tracks;
+    tracks.reserve(paths_to_files.size());
     while (!paths_to_files.empty()) {
         try {
             tracks.push_back(track(paths_to_files.front().c_str()));

@@ -13,14 +13,22 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 set(PROJECT_SOURCES
-        SourceFiles/main.cpp
-        SourceFiles/mainwindow.cpp
-        HeaderFiles/mainwindow.h
-        Forms/mainwindow.ui
-        HeaderFiles/track.h
-        SourceFiles/track.cpp
-        HeaderFiles/TrackInfoUI.h
-        SourceFiles/TrackInfoUI.cpp
+    SourceFiles/main.cpp
+    SourceFiles/mainwindow.cpp
+    SourceFiles/track.cpp
+    SourceFiles/TrackInfoUI.cpp
+
+    HeaderFiles/mainwindow.h
+    HeaderFiles/track.h
+    HeaderFiles/TrackInfoUI.h
+
+    Forms/mainwindow.ui
+
+    Resources/resources.qrc
+)
+
+set(CMAKE_AUTOUIC_SEARCH_PATHS
+    ${CMAKE_CURRENT_SOURCE_DIR}/Forms
 )
 
 # Пути к Homebrew FFmpeg
@@ -53,7 +61,6 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(AudioPlayerQt
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
-        resources.qrc
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET AudioPlayerQt APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
