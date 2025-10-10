@@ -1,7 +1,3 @@
-cmake_minimum_required(VERSION 3.10)
-project(AudioPlayer)
-
-set(CMAKE_CXX_STANDARD 20)
 cmake_minimum_required(VERSION 3.16)
 
 project(AudioPlayerQt VERSION 0.1 LANGUAGES CXX)
@@ -17,28 +13,19 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 set(PROJECT_SOURCES
-        main.cpp
-        mainwindow.cpp
-        mainwindow.h
-        mainwindow.ui
+        SourceFiles/main.cpp
+        SourceFiles/mainwindow.cpp
+        HeaderFiles/mainwindow.h
+        Forms/mainwindow.ui
+        HeaderFiles/track.h
+        SourceFiles/track.cpp
+        HeaderFiles/TrackInfoUI.h
+        SourceFiles/TrackInfoUI.cpp
 )
 
 # Пути к Homebrew FFmpeg
 set(FFMPEG_INCLUDE_DIR "/opt/homebrew/opt/ffmpeg/include")
 set(FFMPEG_LIB_DIR "/opt/homebrew/opt/ffmpeg/lib")
-
-# Заголовки
-include_directories(${FFMPEG_INCLUDE_DIR})
-
-# Исходник
-add_executable(AudioPlayer core/main.cpp
-        core/PlayAudio.h
-        core/PlayAudio.cpp
-        core/Errors.h
-        core/AudioFileLoader.h
-        core/AudioFileLoader.cpp
-        resources.qrc
-)
 # Пути к TagLib
 set(TAGLIB_INCLUDE_DIR "/opt/homebrew/include/taglib")
 set(TAGLIB_LIB_DIR "/opt/homebrew/lib")
@@ -47,17 +34,10 @@ set(TAGLIB_LIB_DIR "/opt/homebrew/lib")
 include_directories(${FFMPEG_INCLUDE_DIR})
 include_directories(${TAGLIB_INCLUDE_DIR})
 
+
 # AudioToolbox - фреймворк, который внутри себя содержит и .h .dylib поэтому не нужно отдельно подключать заголовки
 find_library(AUDIOTOOLBOX_LIBRARY AudioToolbox) # поиск библиотеки с названием AudioToolbox
 
-# Линкуем напрямую на .dylib
-target_link_libraries(AudioPlayer
-        "${FFMPEG_LIB_DIR}/libavcodec.dylib"
-        "${FFMPEG_LIB_DIR}/libavformat.dylib"
-        "${FFMPEG_LIB_DIR}/libavutil.dylib"
-        "${FFMPEG_LIB_DIR}/libswresample.dylib"
-        ${AUDIOTOOLBOX_LIBRARY}
-)
 
 # Создать библиотеку из core
 add_library(core_lib STATIC
@@ -73,10 +53,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(AudioPlayerQt
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
-        track.h
-        track.cpp
-        TrackInfoUI.h
-        TrackInfoUI.cpp
+        resources.qrc
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET AudioPlayerQt APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -95,6 +72,8 @@ else()
         )
     endif()
 endif()
+# подключение header папки к source файлам проекта
+target_include_directories(AudioPlayerQt PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/HeaderFiles)
 
 # линковка и подключение header файлов и библиотек к core_lib и соответ. к audioplayerqt
 target_include_directories(core_lib PUBLIC
