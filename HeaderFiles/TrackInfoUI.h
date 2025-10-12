@@ -3,6 +3,7 @@
 #include <QPushButton>
 
 class PlayerControlsWidget: public QWidget{
+    Q_OBJECT
 private:
     QPushButton *PlayStopTrack;
     QPushButton *PrevTrack;
