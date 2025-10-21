@@ -16,11 +16,11 @@ set(PROJECT_SOURCES
     SourceFiles/main.cpp
     SourceFiles/mainwindow.cpp
     SourceFiles/track.cpp
-    SourceFiles/TrackInfoUI.cpp
+    SourceFiles/DescriptionButton.cpp
 
     HeaderFiles/mainwindow.h
     HeaderFiles/track.h
-    HeaderFiles/TrackInfoUI.h
+    HeaderFiles/DescriptionButton.h
 
     Forms/mainwindow.ui
 
@@ -61,6 +61,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(AudioPlayerQt
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
+        HeaderFiles/StartScreen.h
+        SourceFiles/StartScreen.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET AudioPlayerQt APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

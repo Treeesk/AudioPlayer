@@ -1,5 +1,5 @@
-#ifndef TRACKINFOUI_H
-#define TRACKINFOUI_H
+#ifndef DESCRIPTIONBUTTON_H
+#define DESCRIPTIONBUTTON_H
 #include <QPushButton>
 
 class RoundPushButton: public QPushButton {
@@ -17,7 +17,12 @@ private:
     RoundPushButton *PlayStopTrack;
     RoundPushButton *PrevTrack;
     RoundPushButton *NextTrack;
+    int _widthPCW;
+    void UpdateButtonsGeo();
 public:
     PlayerControlsWidget(QWidget *parent = nullptr);
+    int WidthPCW();
+protected:
+    void resizeEvent(QResizeEvent* event);
 };
-#endif // TRACKINFOUI_H
+#endif // DESCRIPTIONBUTTON_H
