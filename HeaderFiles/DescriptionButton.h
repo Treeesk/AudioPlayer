@@ -17,6 +17,10 @@ private:
     RoundPushButton *PlayStopTrack;
     RoundPushButton *PrevTrack;
     RoundPushButton *NextTrack;
+    QIcon playIcon;
+    QIcon stopIcon;
+    QIcon nexttrackIcon;
+    QIcon prevtrackIcon;
     int _widthPCW;
     void UpdateButtonsGeo();
 public:
@@ -24,5 +28,10 @@ public:
     int WidthPCW();
 protected:
     void resizeEvent(QResizeEvent* event);
+signals:
+    void onPlayclicked();
+    void onPauseclicked();
+public slots:
+    void PlayStopclick(bool checked);
 };
 #endif // DESCRIPTIONBUTTON_H

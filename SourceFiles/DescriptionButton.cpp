@@ -2,13 +2,12 @@
 #include <QHBoxLayout>
 #include <QPainter>
 #include <QPainterPath>
-#include <QDebug>
 
 PlayerControlsWidget::PlayerControlsWidget(QWidget* parent): QWidget(parent) {
-    QIcon playIcon(":/Resources/Icons/Play.png");
-    QIcon stopIcon(":/Resources/Icons/Stop.png");
-    QIcon nexttrackIcon(":/Resources/Icons/Next.png");
-    QIcon prevtrackIcon(":/Resources/Icons/Prev.png");
+    playIcon = QIcon(":/Resources/Icons/Play.png");
+    stopIcon = QIcon(":/Resources/Icons/Stop.png");
+    nexttrackIcon = QIcon(":/Resources/Icons/Next.png");
+    prevtrackIcon = QIcon(":/Resources/Icons/Prev.png");
     PlayStopTrack = new RoundPushButton(this);
     NextTrack = new RoundPushButton(this);
     PrevTrack = new RoundPushButton(this);
@@ -27,14 +26,7 @@ PlayerControlsWidget::PlayerControlsWidget(QWidget* parent): QWidget(parent) {
     PlayStopTrack->setIconSize(QSize(35, 35)); // тест
     PlayStopTrack->setFixedSize(35, 35); // тест
     PlayStopTrack->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    connect(PlayStopTrack, &QPushButton::toggled, this, [this, playIcon, stopIcon](bool checked) {
-        if (!checked) {
-            this->PlayStopTrack->setIcon(playIcon);
-        }
-        else {
-            this->PlayStopTrack->setIcon(stopIcon);
-        }
-    });
+    connect(PlayStopTrack, &QPushButton::toggled, this, &PlayerControlsWidget::PlayStopclick);
     UpdateButtonsGeo();
     PrevTrack->setToolTip("Предыдущий трек");
     NextTrack->setToolTip("Следующий трек");
@@ -60,6 +52,17 @@ int PlayerControlsWidget::WidthPCW() {
     return _widthPCW;
 }
 
+void PlayerControlsWidget::PlayStopclick(bool checked) {
+    if (!checked) {
+        this->PlayStopTrack->setIcon(playIcon);
+        emit onPlayclicked();
+    }
+    else {
+        this->PlayStopTrack->setIcon(stopIcon);
+        emit onPauseclicked();
+    }
+}
+
 bool RoundPushButton::hitButton(const QPoint& pos) const {
     QSize iconsize = this->iconSize();
     double radius = iconsize.width() / 2.0;
@@ -80,3 +83,4 @@ void RoundPushButton::paintEvent(QPaintEvent* event) {
     painter.setPen(Qt::NoPen);
     painter.drawPath(path);
 }
+

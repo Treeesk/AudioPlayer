@@ -1,7 +1,9 @@
 #include "StartScreen.h"
 
-StartScreenWidget::StartScreenWidget(QWidget* parent): QWidget(parent) {
+StartScreenWidget::StartScreenWidget(MusicDataManager* mdm, QWidget* parent): QWidget(parent) {
+    _mdm = mdm;
     pcw = new PlayerControlsWidget(this);
+    create_connections();
     UpdateScreenPos();
 }
 
@@ -13,4 +15,9 @@ void StartScreenWidget::UpdateScreenPos() {
 void StartScreenWidget::resizeEvent(QResizeEvent* event) {
     UpdateScreenPos();
     QWidget::resizeEvent(event);
+}
+
+void StartScreenWidget::create_connections() {
+    connect(pcw, &PlayerControlsWidget::onPlayclicked, _mdm, &MusicDataManager::play);
+    connect(pcw, &PlayerControlsWidget::onPauseclicked, _mdm, &MusicDataManager::pause);
 }

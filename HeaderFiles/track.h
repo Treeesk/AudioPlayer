@@ -16,6 +16,7 @@ private:
     QImage cover; // обложка
 public:
     track(std::string p);
+    std::string& getpath();
 };
 
 #endif // TRACK_H
