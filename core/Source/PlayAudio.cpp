@@ -15,8 +15,8 @@ extern "C" {
 std::queue<std::vector<uint8_t>> que;
 std::mutex mtx;
 std::atomic_bool isplaying;
-std::mutex end_track;
-std::condition_variable cv;
+std::condition_variable pause_cv;
+std::mutex pause_mtx;
 AudioQueueRef queue;
 
 void AudioCallbackF(void* UserData, AudioQueueRef inAQ, AudioQueueBufferRef inBuffer) {
@@ -119,6 +119,11 @@ void PlayAudio(const char* path) {
 
     // цикл чтения файла
     while ((check_err = av_read_frame(fmt_ctx, pkt)) == 0) {
+        {
+            // Остановка декодировая на момент паузы, чтобы не тратить ресурсы устройства
+            std::unique_lock<std::mutex> lock(pause_mtx);
+            pause_cv.wait(lock, []{return isplaying.load();});
+        }
         if (pkt->stream_index == stream_index) {
             check_err = avcodec_send_packet(codec_ctx, pkt);
             if (check_err < 0 && check_err != AVERROR_EOF && check_err != AVERROR(EAGAIN)) {
@@ -168,6 +173,7 @@ void PlayAudio(const char* path) {
 void ResumePlay() {
     if (!isplaying) {
         isplaying = true;
+        pause_cv.notify_all();
         AudioQueueStart(queue, nullptr);
     }
 }
