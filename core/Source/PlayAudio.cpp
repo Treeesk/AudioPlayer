@@ -14,20 +14,16 @@ extern "C" {
 
 std::queue<std::vector<uint8_t>> que;
 std::mutex mtx;
-std::atomic<bool> finished = false; // чтобы не было гонки данных в момент записи в одном потоке и проверки в другом 
-bool callbackfinish = false;
+std::atomic_bool isplaying;
 std::mutex end_track;
 std::condition_variable cv;
+AudioQueueRef queue;
 
 void AudioCallbackF(void* UserData, AudioQueueRef inAQ, AudioQueueBufferRef inBuffer) {
     std::lock_guard<std::mutex> lock(mtx);
     if (que.empty()) {
         memset(inBuffer->mAudioData, 0, inBuffer->mAudioDataBytesCapacity);
         inBuffer->mAudioDataByteSize = inBuffer->mAudioDataBytesCapacity;
-        if (finished) {
-            callbackfinish = true;
-            cv.notify_one();
-        }
     } else {
         auto& front = que.front();
         size_t bytes_copy = front.size();
@@ -35,10 +31,10 @@ void AudioCallbackF(void* UserData, AudioQueueRef inAQ, AudioQueueBufferRef inBu
         inBuffer->mAudioDataByteSize = bytes_copy;
         que.pop();
     }
-    AudioQueueEnqueueBuffer(inAQ, inBuffer, 0, NULL);
+    AudioQueueEnqueueBuffer(inAQ, inBuffer, 0, NULL); // передача pcm из que в queue
 }
 
-void PlayPcm(AudioQueueRef& queue) {
+void PlayPcm() {
     AudioStreamBasicDescription format = {0};
     format.mSampleRate = 44100;
     format.mFormatID = kAudioFormatLinearPCM;
@@ -62,6 +58,7 @@ void PlayPcm(AudioQueueRef& queue) {
 }
 
 void PlayAudio(const char* path) {
+    isplaying = true;
     AVFormatContext* fmt_ctx = nullptr;
     int check_err;
     check_err = avformat_open_input(&fmt_ctx, path, NULL, NULL);
@@ -117,8 +114,8 @@ void PlayAudio(const char* path) {
         throw PlayAudioErr("Could not allocate audio frame");
     }
 
-    AudioQueueRef queue;
-    PlayPcm(queue); // запускаем сразу
+
+    PlayPcm(); // запускаем сразу
 
     // цикл чтения файла
     while ((check_err = av_read_frame(fmt_ctx, pkt)) == 0) {
@@ -160,19 +157,41 @@ void PlayAudio(const char* path) {
     if (check_err != AVERROR_EOF) {
         averr_process(check_err);
     }
-
-    // нужно не завершать работу, чтобы que не пропал и Core Audio мог работать
-    finished = true;
-    std::unique_lock lk(end_track);
-    cv.wait(lk, [] {return callbackfinish;});
-    AudioQueueStop(queue, false); // остановка и очистка структур, потенциально может пригодится, если будет много одновременно вызовов
-    AudioQueueDispose(queue, true);
     // free memory
     av_frame_free(&frame);
     av_packet_free(&pkt);
     swr_free(&swr_context);
     avcodec_free_context(&codec_ctx);
     avformat_close_input(&fmt_ctx);
+}
+
+void ResumePlay() {
+    if (!isplaying) {
+        isplaying = true;
+        AudioQueueStart(queue, nullptr);
+    }
+}
+
+void Pause() {
+    if (isplaying) {
+        isplaying = false;
+        AudioQueuePause(queue);
+    }
+}
+
+void ResetPlay() {
+    // Очищение всех данных, чтобы новый трек не наложился на старый и тд.
+    // Вызывать перед запуском нового трека
+    if (queue) {
+        AudioQueueStop(queue, true);
+        AudioQueueDispose(queue, true);
+        queue = nullptr;
+    }
+    {
+        std::lock_guard<std::mutex> lock(mtx);
+        std::queue<std::vector<uint8_t>> empty;
+        std::swap(que, empty);
+    }
 }
 
 void averr_process(int err) {

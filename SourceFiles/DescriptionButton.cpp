@@ -52,13 +52,13 @@ int PlayerControlsWidget::WidthPCW() {
     return _widthPCW;
 }
 
-void PlayerControlsWidget::PlayStopclick(bool checked) {
-    if (!checked) {
-        this->PlayStopTrack->setIcon(playIcon);
+void PlayerControlsWidget::PlayStopclick(bool isPlaying) {
+    if (isPlaying) {
+        this->PlayStopTrack->setIcon(stopIcon);
         emit onPlayclicked();
     }
     else {
-        this->PlayStopTrack->setIcon(stopIcon);
+        this->PlayStopTrack->setIcon(playIcon);
         emit onPauseclicked();
     }
 }

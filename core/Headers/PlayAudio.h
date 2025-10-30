@@ -6,5 +6,8 @@ void PlayAudio(const char *fp);
 void PlayPCM(AudioQueueRef& que);
 void AudioCallbackF(void* UD, AudioQueueRef inAQ, AudioQueueBufferRef inBuffer);
 void averr_process(int err);
+void Pause();
+void ResumePlay();
+void ResetPlay();
 
 #endif

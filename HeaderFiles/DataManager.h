@@ -22,6 +22,7 @@ private:
     QVector<track> tracks;
     int _currenttrackind = -1;
     bool _isplaying = false;
+    bool launchtrack = false;
 };
 
 #endif // DATAMANAGER_H

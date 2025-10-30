@@ -28,15 +28,23 @@ const QVector<track>& MusicDataManager::alltracks() {
 
 void MusicDataManager::play() {
     _isplaying = true;
-    PlayAudio(tracks[_currenttrackind].getpath().c_str());
+    if (!launchtrack) {
+        launchtrack = true;
+        ResetPlay();
+        PlayAudio(tracks[_currenttrackind].getpath().c_str());
+    }
+    else {
+        ResumePlay();
+    }
 }
 
 void MusicDataManager::pause() {
     _isplaying = false;
-    // функция остановки проигрывания трека в движке
+    Pause();
 }
 
 void MusicDataManager::next() {
+    launchtrack = false;
     if (_currenttrackind == tracks.size() - 1) {
         _currenttrackind = 0;
     }
@@ -49,6 +57,7 @@ void MusicDataManager::next() {
 }
 
 void MusicDataManager::prev() {
+    launchtrack = false;
     if (_currenttrackind == 0) {
         _currenttrackind = tracks.size() - 1;
     }
