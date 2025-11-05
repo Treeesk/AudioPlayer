@@ -20,4 +20,6 @@ void StartScreenWidget::resizeEvent(QResizeEvent* event) {
 void StartScreenWidget::create_connections() {
     connect(pcw, &PlayerControlsWidget::onPlayclicked, _mdm, &MusicDataManager::play);
     connect(pcw, &PlayerControlsWidget::onPauseclicked, _mdm, &MusicDataManager::pause);
+    connect(pcw, &PlayerControlsWidget::onNextclicked, _mdm, &MusicDataManager::next);
+    connect(pcw, &PlayerControlsWidget::onPrevclicked, _mdm, &MusicDataManager::prev);
 }

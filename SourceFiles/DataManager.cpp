@@ -53,7 +53,6 @@ void MusicDataManager::next() {
     }
         // emit на Сигнал currenttrackchange, чтобы изменить внешний вид
     play();
-    // emit на кнопку, которая взаимодействует с PLAY/STOP audio. Чтобы кнопка переключилась
 }
 
 void MusicDataManager::prev() {
@@ -66,5 +65,4 @@ void MusicDataManager::prev() {
     }
         // emit на Сигнал currenttrackchange, чтобы изменить внешний вид
     play();
-    // emit на кнопку, которая взаимодействует с PLAY/STOP audio. Чтобы кнопка переключилась
 }

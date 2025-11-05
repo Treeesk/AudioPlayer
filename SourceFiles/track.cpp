@@ -28,7 +28,7 @@ track::track(std::string path) {
     });
     if (format == "mp3") {
         TagLib::MPEG::File f(path.c_str());
-        if (!f.hasID3v2Tag() || !f.audioProperties()){
+        if (!f.isValid() || !f.audioProperties()){
             error_reproduct(path);
         }
         TagLib::ID3v2::Tag *tag = f.ID3v2Tag(true);
@@ -47,7 +47,7 @@ track::track(std::string path) {
     }
     else if (format == "m4a") {
         TagLib::MP4::File f(path.c_str());
-        if (!f.hasMP4Tag() || !f.audioProperties()) {
+        if (!f.isValid() || !f.audioProperties()) {
             error_reproduct(path);
         }
         TagLib::MP4::Tag *tag = f.tag();
@@ -70,7 +70,7 @@ track::track(std::string path) {
     }
     else if (format == "flac"){
         TagLib::FLAC::File f(path.c_str());
-        if (!f.hasID3v2Tag() || !f.audioProperties()){
+        if (!f.isValid() || !f.audioProperties()){
             error_reproduct(path);
         }
         TagLib::ID3v2::Tag *tag = f.ID3v2Tag(true);

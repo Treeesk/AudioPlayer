@@ -31,7 +31,11 @@ protected:
 signals:
     void onPlayclicked();
     void onPauseclicked();
+    void onNextclicked();
+    void onPrevclicked();
 public slots:
     void PlayStopclick(bool checked);
+    void NextTrackclick();
+    void PrevTrackclick();
 };
 #endif // DESCRIPTIONBUTTON_H

@@ -15,11 +15,15 @@ PlayerControlsWidget::PlayerControlsWidget(QWidget* parent): QWidget(parent) {
     NextTrack->setIconSize(QSize(35, 35)); // тест
     NextTrack->setFixedSize(35, 35); // тест
     NextTrack->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    NextTrack->setCheckable(true);
+    connect(NextTrack, &QPushButton::toggled, this, &PlayerControlsWidget::NextTrackclick);
 
     PrevTrack->setIconSize(QSize(35, 35)); // тест
     PrevTrack->setFixedSize(35, 35); // тест
     PrevTrack->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     PrevTrack->setIcon(prevtrackIcon);
+    PrevTrack->setCheckable(true);
+    connect(PrevTrack, &QPushButton::toggled, this, &PlayerControlsWidget::PrevTrackclick);
 
     PlayStopTrack->setCheckable(true);
     PlayStopTrack->setIcon(playIcon);
@@ -61,6 +65,26 @@ void PlayerControlsWidget::PlayStopclick(bool isPlaying) {
         this->PlayStopTrack->setIcon(playIcon);
         emit onPauseclicked();
     }
+}
+
+void PlayerControlsWidget::NextTrackclick() {
+    if (!PlayStopTrack->isChecked()) { // проверяем состояние кнопки
+        PlayStopTrack->blockSignals(true); // выключили сигналы от PlayStopTrack
+        PlayStopTrack->setChecked(true);
+        PlayStopTrack->setIcon(stopIcon);
+        PlayStopTrack->blockSignals(false);
+    }
+    emit onNextclicked();
+}
+
+void PlayerControlsWidget::PrevTrackclick(){
+    if (!PlayStopTrack->isChecked()) {
+        PlayStopTrack->blockSignals(true);
+        PlayStopTrack->setChecked(true);
+        PlayStopTrack->setIcon(stopIcon);
+        PlayStopTrack->blockSignals(false);
+    }
+    emit onPrevclicked();
 }
 
 bool RoundPushButton::hitButton(const QPoint& pos) const {
