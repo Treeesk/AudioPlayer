@@ -2,6 +2,7 @@
 #define STARTSCREEN_H
 #include "DescriptionButton.h"
 #include "DataManager.h"
+#include "TrackInfoUI.h"
 
 class StartScreenWidget: public QWidget {
     Q_OBJECT
@@ -10,6 +11,7 @@ public:
 private:
     PlayerControlsWidget* pcw;
     MusicDataManager* _mdm;
+    TrackInfoWidget* trif;
     void UpdateScreenPos();
     void create_connections();
 protected:

@@ -10,7 +10,7 @@
 #include <mp4file.h>
 #include <mp4coverart.h>
 #include <flacfile.h>
-
+#include <iostream>
 void track::loadtrackdata(const char* pict, int pic_size, TagLib::String artist, TagLib::String title, int duration) {
     _title = QString::fromStdString(title.to8Bit(true));
     _artist = QString::fromStdString(artist.to8Bit(true));
@@ -37,7 +37,7 @@ track::track(std::string path) {
         if (!frames.isEmpty()) {
             for (auto it = frames.begin(); it != frames.end(); ++it){
                 auto *frame = static_cast<TagLib::ID3v2::AttachedPictureFrame*>(*it); // базовый frame не содержит методов type и picture
-                if (frame->type() == TagLib::ID3v2::AttachedPictureFrame::FrontCover){ // обложка
+                if (!frame->picture().isEmpty()) { // обложка
                     dat = frame->picture();
                     break;
                 }

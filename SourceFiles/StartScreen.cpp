@@ -3,13 +3,20 @@
 StartScreenWidget::StartScreenWidget(MusicDataManager* mdm, QWidget* parent): QWidget(parent) {
     _mdm = mdm;
     pcw = new PlayerControlsWidget(this);
+    trif = new TrackInfoWidget(_mdm->currenttrack(), this);
     create_connections();
     UpdateScreenPos();
 }
 
 void StartScreenWidget::UpdateScreenPos() {
     int centerX = width() / 2;
-    pcw->setGeometry(centerX, height() * 3 / 4, pcw->WidthPCW(), 70);
+    int verticalSpacing = 10;
+    int pcwCenterX = centerX + (trif->width() - pcw->WidthPCW()) / 2;
+    int startY = height() / 4;
+    int pcwY = startY + 260 + verticalSpacing;
+
+    trif->setGeometry(centerX, startY, 200, 260);
+    pcw->setGeometry(pcwCenterX, pcwY, pcw->WidthPCW(), 70);
 }
 
 void StartScreenWidget::resizeEvent(QResizeEvent* event) {

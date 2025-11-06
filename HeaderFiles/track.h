@@ -14,6 +14,7 @@ private:
     std::string _path;
     QString _title;
     QImage cover; // обложка
+    friend class TrackInfoWidget;
 public:
     track(std::string p);
     std::string& getpath();

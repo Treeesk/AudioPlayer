@@ -8,7 +8,7 @@ MainWindow::MainWindow(MusicDataManager* mdm, QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    setMinimumSize(400, 250);
+    setMinimumSize(410, 440);
     StartScreenWidget* mainwid = new StartScreenWidget(mdm, this);
     setCentralWidget(mainwid);
     QPalette pal = palette();
