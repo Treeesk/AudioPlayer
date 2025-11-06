@@ -16,9 +16,14 @@ void TrackInfoWidget::paintEvent(QPaintEvent* event) {
     // }
     painter.setRenderHint(QPainter::Antialiasing);
     painter.drawPixmap(coverRect, pixmapcover);
+    QFont font("Times New Roman", 16, QFont::DemiBold);
+    painter.setFont(font);
     QRect titleRect(0, sizecover + 10, sizecover, 20);
     painter.drawText(titleRect, Qt::AlignCenter | Qt::TextWordWrap, title);
-    QRect artistRect(0, sizecover + 40, sizecover, 20);
+    font.setPointSize(14);
+    font.setWeight(QFont::Normal);
+    painter.setFont(font);
+    QRect artistRect(0, sizecover + 40, sizecover, 10);
     painter.drawText(artistRect, Qt::AlignCenter | Qt::TextWordWrap, artist);
 }
 

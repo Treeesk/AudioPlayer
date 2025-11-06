@@ -11,11 +11,12 @@ StartScreenWidget::StartScreenWidget(MusicDataManager* mdm, QWidget* parent): QW
 void StartScreenWidget::UpdateScreenPos() {
     int centerX = width() / 2;
     int verticalSpacing = 10;
+    int heightTrackInfo = 250;
     int pcwCenterX = centerX + (trif->width() - pcw->WidthPCW()) / 2;
     int startY = height() / 4;
-    int pcwY = startY + 260 + verticalSpacing;
+    int pcwY = startY + heightTrackInfo + verticalSpacing;
 
-    trif->setGeometry(centerX, startY, 200, 260);
+    trif->setGeometry(centerX, startY, 200, heightTrackInfo);
     pcw->setGeometry(pcwCenterX, pcwY, pcw->WidthPCW(), 70);
 }
 
