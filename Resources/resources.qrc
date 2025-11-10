@@ -4,5 +4,6 @@
         <file>Icons/Play.png</file>
         <file>Icons/Prev.png</file>
         <file>Icons/Stop.png</file>
+        <file>Icons/CoverMus.png</file>
     </qresource>
 </RCC>

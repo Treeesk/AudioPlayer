@@ -1,6 +1,5 @@
 #include "track.h"
 #include <taglib.h>
-#include <fileref.h>
 #include <tfile.h>
 #include <cctype>
 #include <algorithm>
@@ -13,12 +12,16 @@
 #include <apetag.h>
 #include <id3v1tag.h>
 #include <QDebug>
+#include <oggflacfile.h>
 void track::loadtrackdata(const char* pict, int pic_size, TagLib::String artist, TagLib::String title, int duration) {
     _title = QString::fromStdString(title.to8Bit(true));
     _artist = QString::fromStdString(artist.to8Bit(true));
     _duration = duration;
     if (pict)
         cover.loadFromData(reinterpret_cast<const uchar*>(pict), pic_size);
+    else {
+        cover = QImage(":/Resources/Icons/CoverMus.png");
+    }
 }
 
 track::track(std::string path) {
@@ -69,35 +72,7 @@ track::track(std::string path) {
             }
         }
         if (artist.isEmpty() || title.isEmpty()) {
-            TagLib::Tag* tag = f.tag();
-            if (artist.isEmpty()) {
-                artist = tag->artist();
-                if (artist.isEmpty()) {
-                    auto start_artistname = path.rfind('/');
-                    auto end_artistname = path.rfind('-');
-                    if (start_artistname != std::string::npos && end_artistname != std::string::npos) {
-                        artist = path.substr(start_artistname + 1, end_artistname - start_artistname - 1);
-                    }
-                    else {
-                        artist = "Unknown artist";
-                    }
-                }
-            }
-            if (title.isEmpty()) {
-                title = tag->title();
-                if (title.isEmpty()) {
-                    auto start_title = path.rfind('-');
-                    if (start_title != std::string::npos) {
-                        title = path.substr(start_title + 1, path.rfind('.') - start_title - 1);
-                    }
-                    else {
-                        title = "Unknown title";
-                    }
-                }
-            }
-        }
-        if (dat.isEmpty()) {
-
+            standartprocessNames(f.tag(), artist, title, path);
         }
         loadtrackdata(dat.data(), dat.size(), artist, title, f.audioProperties()->lengthInSeconds());
     }
@@ -106,8 +81,12 @@ track::track(std::string path) {
         if (!f.isValid() || !f.audioProperties()) {
             error_reproduct(path);
         }
-        TagLib::MP4::Tag *tag = f.tag();
-        auto &map = tag->itemMap();
+        TagLib::Tag* tag = f.tag();
+        TagLib::String artist, title;
+        standartprocessNames(tag, artist, title, path);
+
+        TagLib::MP4::Tag *mp4tag = f.tag();
+        auto &map = mp4tag->itemMap();
         auto iter = map.find("covr");
         TagLib::ByteVector dat;
         if (iter != map.end()){
@@ -122,25 +101,42 @@ track::track(std::string path) {
                 }
             }
         }
-        loadtrackdata(dat.data(), dat.size(), tag->artist(), tag->title(), f.audioProperties()->lengthInSeconds());
+        loadtrackdata(dat.data(), dat.size(), artist, title, f.audioProperties()->lengthInSeconds());
     }
     else if (format == "flac"){
         TagLib::FLAC::File f(path.c_str());
         if (!f.isValid() || !f.audioProperties()){
             error_reproduct(path);
         }
-        TagLib::ID3v2::Tag *tag = f.ID3v2Tag(true);
-        auto piclist = f.pictureList();
+        TagLib::String artist, title;
+        if (f.hasXiphComment()) {
+            TagLib::Ogg::XiphComment* tag = f.xiphComment();
+            artist = tag->artist();
+            title = tag->title();
+        }
+        if (f.hasID3v2Tag()) {
+            TagLib::ID3v2::Tag *tag = f.ID3v2Tag();
+            if (artist.isEmpty()){
+                artist = tag->artist();
+            }
+            if (title.isEmpty()){
+                title = tag->title();
+            }
+        }
+        if (artist.isEmpty() || title.isEmpty()) {
+            standartprocessNames(f.tag(), artist, title, path);
+        }
         TagLib::ByteVector dat;
-        if (!piclist.isEmpty()){
-            for (auto &pic: piclist){
-                if (pic->type() == TagLib::FLAC::Picture::FrontCover){ // обложка
+        auto pictures = f.pictureList();
+        if (!pictures.isEmpty()) {
+            for (auto *pic : pictures) {
+                if (pic && pic->type() == TagLib::FLAC::Picture::FrontCover) {
                     dat = pic->data();
                     break;
                 }
             }
         }
-        loadtrackdata(dat.data(), dat.size(), tag->artist(), tag->title(), f.audioProperties()->lengthInSeconds());
+        loadtrackdata(dat.data(), dat.size(), artist, title, f.audioProperties()->lengthInSeconds());
     }
     else {
         TagLib::FileRef f(path.c_str());
@@ -148,8 +144,38 @@ track::track(std::string path) {
             error_reproduct(path);
         }
         TagLib::Tag *tag = f.tag();
+        TagLib::String artist, title;
+        standartprocessNames(tag, artist, title, path);
         if (tag) {
-            loadtrackdata(nullptr, 0, tag->artist(), tag->title(), f.audioProperties()->lengthInSeconds());
+            loadtrackdata(nullptr, 0, artist, title, f.audioProperties()->lengthInSeconds());
+        }
+    }
+}
+
+void track::standartprocessNames(TagLib::Tag* tag, TagLib::String& artist, TagLib::String& title, const std::string& path) {
+    if (artist.isEmpty()) {
+        artist = tag->artist();
+        if (artist.isEmpty()) {
+            auto start_artistname = path.rfind('/');
+            auto end_artistname = path.rfind('-');
+            if (start_artistname != std::string::npos && end_artistname != std::string::npos) {
+                artist = path.substr(start_artistname + 1, end_artistname - start_artistname - 1);
+            }
+            else {
+                artist = "Unknown artist";
+            }
+        }
+    }
+    if (title.isEmpty()) {
+        title = tag->title();
+        if (title.isEmpty()) {
+            auto start_title = path.rfind('-');
+            if (start_title != std::string::npos) {
+                title = path.substr(start_title + 1, path.rfind('.') - start_title - 1);
+            }
+            else {
+                title = "Unknown title";
+            }
         }
     }
 }
