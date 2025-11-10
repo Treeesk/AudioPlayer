@@ -16,7 +16,7 @@ public slots:
     void next();
     void prev();
 signals:
-//curtrackchange, обработчик ошибок
+    void currenttrackchange(const track& trk);
 
 private:
     QVector<track> tracks;

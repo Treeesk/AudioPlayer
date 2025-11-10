@@ -10,8 +10,8 @@ StartScreenWidget::StartScreenWidget(MusicDataManager* mdm, QWidget* parent): QW
 
 void StartScreenWidget::UpdateScreenPos() {
     int centerX = width() / 2;
-    int verticalSpacing = 10;
-    int heightTrackInfo = 250;
+    int verticalSpacing = 5;
+    int heightTrackInfo = 260;
     int pcwCenterX = centerX + (trif->width() - pcw->WidthPCW()) / 2;
     int startY = height() / 4;
     int pcwY = startY + heightTrackInfo + verticalSpacing;
@@ -30,4 +30,5 @@ void StartScreenWidget::create_connections() {
     connect(pcw, &PlayerControlsWidget::onPauseclicked, _mdm, &MusicDataManager::pause);
     connect(pcw, &PlayerControlsWidget::onNextclicked, _mdm, &MusicDataManager::next);
     connect(pcw, &PlayerControlsWidget::onPrevclicked, _mdm, &MusicDataManager::prev);
+    connect(_mdm, &MusicDataManager::currenttrackchange, trif, &TrackInfoWidget::setTrack);
 }

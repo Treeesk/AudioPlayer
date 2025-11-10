@@ -2,6 +2,7 @@
 #include <iostream>
 #include "AudioFileLoader.h"
 #include "PlayAudio.h"
+#include "TrackInfoUI.h"
 
 void MusicDataManager::loadfromdata(const char* path_to_dir) {
     std::deque<std::filesystem::path> paths_to_files = GetAudioFiles(path_to_dir);
@@ -51,7 +52,7 @@ void MusicDataManager::next() {
     else {
         _currenttrackind++;
     }
-        // emit на Сигнал currenttrackchange, чтобы изменить внешний вид
+    emit currenttrackchange(currenttrack());
     play();
 }
 
@@ -63,6 +64,6 @@ void MusicDataManager::prev() {
     else {
         _currenttrackind--;
     }
-        // emit на Сигнал currenttrackchange, чтобы изменить внешний вид
+    emit currenttrackchange(currenttrack());
     play();
 }
