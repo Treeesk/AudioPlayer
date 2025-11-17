@@ -3,18 +3,21 @@
 #include <QWidget>
 #include "track.h"
 #include <QTimer>
+#include <QSlider>
 class TrackTime: public QWidget {
     Q_OBJECT
 private:
     int currenttime;
     int totaltime;
     QTimer* timer;
+    QSlider* slider;
     int _width;
     int _height;
     bool launch = false;
+    bool flag_for_slider_geo = false;
 public:
-    TrackTime(int duration, int width, int height, QWidget *parent = nullptr);
-    void settime(int duration);
+    TrackTime(const int& duration, const int& width, const int& height, QWidget *parent = nullptr);
+    void settime(const int& duration);
 protected:
     void paintEvent(QPaintEvent* event);
 public slots:
@@ -40,5 +43,4 @@ protected:
 public slots:
     void setTrack(const track& trk);
 };
-
 #endif // TRACKINFOUI_H

@@ -4,6 +4,7 @@
 #include <QPainter>
 #include <QDebug>
 #include <QString>
+
 TrackInfoWidget::TrackInfoWidget(const track& trk, QWidget *parent): QWidget(parent) {
     setFixedSize(sizecover, sizecover + 70);
     pixmapcover = QPixmap::fromImage(trk.cover);
@@ -39,13 +40,15 @@ void TrackInfoWidget::setTrack(const track& trk) {
     time->settime(trk._duration);
     update();
 }
-
-TrackTime::TrackTime(int duration, int width, int height, QWidget* parent): QWidget(parent){
+// убрать width и height они и так должны быть
+TrackTime::TrackTime(const int& duration, const int& width, const int& height, QWidget* parent): QWidget(parent){
     setFixedSize(width, height);
     totaltime = duration;
     currenttime = 0;
     _width = width;
     _height = height;
+    slider = new QSlider(Qt::Horizontal, this);
+    slider->setRange(0, totaltime * 2);
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &TrackTime::changetime);
 }
@@ -53,7 +56,6 @@ TrackTime::TrackTime(int duration, int width, int height, QWidget* parent): QWid
 void TrackTime::paintEvent(QPaintEvent* event) {
     QPainter painter(this);
     painter.setPen(Qt::black);
-    QRect timeRect(0, 0, _width, _height);
     QString time_of_track;
     if (totaltime % 60 / 10 != 0){
         time_of_track = QString::number(totaltime / 60) + ":" + QString::number(totaltime % 60);
@@ -61,7 +63,11 @@ void TrackTime::paintEvent(QPaintEvent* event) {
     else {
         time_of_track = QString::number(totaltime / 60) + ":" + "0" + QString::number(totaltime % 60);
     }
-    painter.drawText(timeRect, Qt::AlignRight, time_of_track);
+    //QFontMetrics fm = painter.fontMetrics();
+    //int heightFont = fm.height(); // максимальная высота текста которая может быть при этом размере шрифта
+    int widthtotalTime = painter.fontMetrics().horizontalAdvance(time_of_track); // fontMetrics возвращает объект содержащий в пикселях размер шрифта, horizontalAdvance подсчитывает сколько в пикселях текст будет
+    QRect timeRect(_width - widthtotalTime, 0, widthtotalTime, _height);
+    painter.drawText(timeRect, Qt::AlignLeft | Qt::AlignVCenter,time_of_track);
 
     QString past_tense;
     if (currenttime % 60 / 10 != 0) {
@@ -70,7 +76,14 @@ void TrackTime::paintEvent(QPaintEvent* event) {
     else {
         past_tense = QString::number(currenttime / 60) + ":" + "0" + QString::number(currenttime % 60);
     }
-    painter.drawText(timeRect, Qt::AlignLeft, past_tense);
+    int widthpasttense = painter.fontMetrics().horizontalAdvance(past_tense);
+    timeRect.setRect(0, 0, widthpasttense, _height);
+    painter.drawText(timeRect, Qt::AlignRight | Qt::AlignVCenter, past_tense);
+    if (!flag_for_slider_geo) {
+        flag_for_slider_geo = true;
+        int slider_height = _height / 2;
+        slider->setGeometry(widthpasttense + 5, (_height - slider_height) / 2, _width - widthtotalTime - widthpasttense - 10, slider_height);
+    }
 }
 
 void TrackTime::changetime() {
@@ -81,10 +94,7 @@ void TrackTime::changetime() {
     }
 }
 
-void TrackTime::settime(int duration) {
-    if (duration == 0)
-        duration = 180;
-
+void TrackTime::settime(const int& duration) {
     totaltime = duration;
     launch = false;
     start();

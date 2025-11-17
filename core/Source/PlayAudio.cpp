@@ -194,18 +194,15 @@ double GetDurationWithFFprobe(const char* filename) {
 
     // Способ 1: Длительность из контейнера
     if (fmt_ctx->duration != AV_NOPTS_VALUE) {
-        duration = (double)fmt_ctx->duration / AV_TIME_BASE;
+        duration = (double)fmt_ctx->duration / AV_TIME_BASE; // AV_TIME_BASE целое число
     }
     // Способ 2: Длительность из аудио потока
-    int audio_stream_index = -1;
     for (unsigned int i = 0; i < fmt_ctx->nb_streams; i++) {
         if (fmt_ctx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_AUDIO) {
-            audio_stream_index = i;
-            AVStream* stream = fmt_ctx->streams[i];
+            AVStream* stream = fmt_ctx->streams[i]; // нашли аудиодорожку
 
             if (stream->duration != AV_NOPTS_VALUE) {
-                double stream_duration = stream->duration * av_q2d(stream->time_base);
-
+                double stream_duration = stream->duration * av_q2d(stream->time_base); // stream->time_base дробное число
                 // Выбираем длительность потока, если она доступна
                 if (stream_duration > 0) {
                     duration = stream_duration;
@@ -214,7 +211,6 @@ double GetDurationWithFFprobe(const char* filename) {
             break;
         }
     }
-
     avformat_close_input(&fmt_ctx);
     return duration;
 }
