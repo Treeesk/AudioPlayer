@@ -33,4 +33,5 @@ void StartScreenWidget::create_connections() {
     connect(_mdm, &MusicDataManager::currenttrackchange, trif, &TrackInfoWidget::setTrack);
     connect(pcw, &PlayerControlsWidget::onPlayclicked, trif->time, &TrackTime::start);
     connect(pcw, &PlayerControlsWidget::onPauseclicked, trif->time, &TrackTime::pause);
+    connect(trif->time, &TrackTime::endtrack, _mdm, &MusicDataManager::next);
 }

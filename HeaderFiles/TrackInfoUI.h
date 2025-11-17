@@ -21,6 +21,8 @@ public slots:
     void changetime();
     void start();
     void pause();
+signals:
+    void endtrack();
 };
 
 class TrackInfoWidget: public QWidget{

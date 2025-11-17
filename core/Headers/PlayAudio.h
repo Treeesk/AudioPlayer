@@ -9,5 +9,5 @@ void averr_process(int err);
 void Pause();
 void ResumePlay();
 void ResetPlay();
-
+double GetDurationWithFFprobe(const char* filename);
 #endif

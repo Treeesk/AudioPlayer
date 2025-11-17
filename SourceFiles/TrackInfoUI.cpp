@@ -15,9 +15,7 @@ TrackInfoWidget::TrackInfoWidget(const track& trk, QWidget *parent): QWidget(par
 
 void TrackInfoWidget::paintEvent(QPaintEvent* event) {
     QPainter painter(this);
-    // if (!pixmapcover.isNull()) {
-        QRect coverRect((width() - sizecover) / 2.0, 0, sizecover, sizecover); // размер 200x200, начало в 0 0
-    // }
+    QRect coverRect((width() - sizecover) / 2.0, 0, sizecover, sizecover); // размер 200x200, начало в 0 0
     painter.setPen(Qt::black);
     painter.setRenderHint(QPainter::Antialiasing);
     painter.drawPixmap(coverRect, pixmapcover);
@@ -78,9 +76,15 @@ void TrackTime::paintEvent(QPaintEvent* event) {
 void TrackTime::changetime() {
     currenttime++;
     update();
+    if (currenttime == totaltime) {
+        emit endtrack();
+    }
 }
 
 void TrackTime::settime(int duration) {
+    if (duration == 0)
+        duration = 180;
+
     totaltime = duration;
     launch = false;
     start();

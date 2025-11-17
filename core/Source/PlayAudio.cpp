@@ -170,6 +170,55 @@ void PlayAudio(const char* path) {
     avformat_close_input(&fmt_ctx);
 }
 
+double GetDurationWithFFprobe(const char* filename) {
+    AVFormatContext* fmt_ctx = nullptr;
+    AVDictionary* options = nullptr;
+
+    av_dict_set(&options, "accurate_seek", "1", 0); // установка опций для более точного определения длительности
+
+    if (avformat_open_input(&fmt_ctx, filename, nullptr, &options) < 0) {
+        std::cerr << "Cannot open file: " << filename << std::endl;
+        av_dict_free(&options);
+        return -1;
+    }
+
+    av_dict_free(&options);
+
+    if (avformat_find_stream_info(fmt_ctx, nullptr) < 0) {
+        std::cerr << "Cannot find stream info" << std::endl;
+        avformat_close_input(&fmt_ctx);
+        return -1;
+    }
+
+    double duration = -1;
+
+    // Способ 1: Длительность из контейнера
+    if (fmt_ctx->duration != AV_NOPTS_VALUE) {
+        duration = (double)fmt_ctx->duration / AV_TIME_BASE;
+    }
+    // Способ 2: Длительность из аудио потока
+    int audio_stream_index = -1;
+    for (unsigned int i = 0; i < fmt_ctx->nb_streams; i++) {
+        if (fmt_ctx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_AUDIO) {
+            audio_stream_index = i;
+            AVStream* stream = fmt_ctx->streams[i];
+
+            if (stream->duration != AV_NOPTS_VALUE) {
+                double stream_duration = stream->duration * av_q2d(stream->time_base);
+
+                // Выбираем длительность потока, если она доступна
+                if (stream_duration > 0) {
+                    duration = stream_duration;
+                }
+            }
+            break;
+        }
+    }
+
+    avformat_close_input(&fmt_ctx);
+    return duration;
+}
+
 void ResumePlay() {
     if (!isplaying) {
         isplaying = true;
