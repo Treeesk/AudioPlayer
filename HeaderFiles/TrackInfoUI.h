@@ -11,8 +11,6 @@ private:
     int totaltime;
     QTimer* timer;
     QSlider* slider;
-    int _width;
-    int _height;
     bool launch = false;
     bool flag_for_slider_geo = false;
 public:

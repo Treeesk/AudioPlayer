@@ -40,13 +40,11 @@ void TrackInfoWidget::setTrack(const track& trk) {
     time->settime(trk._duration);
     update();
 }
-// убрать width и height они и так должны быть
+
 TrackTime::TrackTime(const int& duration, const int& width, const int& height, QWidget* parent): QWidget(parent){
     setFixedSize(width, height);
     totaltime = duration;
     currenttime = 0;
-    _width = width;
-    _height = height;
     slider = new QSlider(Qt::Horizontal, this);
     slider->setRange(0, totaltime * 2);
     timer = new QTimer(this);
@@ -63,11 +61,11 @@ void TrackTime::paintEvent(QPaintEvent* event) {
     else {
         time_of_track = QString::number(totaltime / 60) + ":" + "0" + QString::number(totaltime % 60);
     }
-    //QFontMetrics fm = painter.fontMetrics();
-    //int heightFont = fm.height(); // максимальная высота текста которая может быть при этом размере шрифта
+    QFontMetrics fm = painter.fontMetrics();
+    int heightFont = fm.height(); // высота текста которая может быть при этом размере шрифта
     int widthtotalTime = painter.fontMetrics().horizontalAdvance(time_of_track); // fontMetrics возвращает объект содержащий в пикселях размер шрифта, horizontalAdvance подсчитывает сколько в пикселях текст будет
-    QRect timeRect(_width - widthtotalTime, 0, widthtotalTime, _height);
-    painter.drawText(timeRect, Qt::AlignLeft | Qt::AlignVCenter,time_of_track);
+    QRect timeRect(width() - widthtotalTime, (height() - heightFont) / 2, widthtotalTime, heightFont);
+    painter.drawText(timeRect, Qt::AlignLeft | Qt::AlignVCenter, time_of_track);
 
     QString past_tense;
     if (currenttime % 60 / 10 != 0) {
@@ -77,12 +75,11 @@ void TrackTime::paintEvent(QPaintEvent* event) {
         past_tense = QString::number(currenttime / 60) + ":" + "0" + QString::number(currenttime % 60);
     }
     int widthpasttense = painter.fontMetrics().horizontalAdvance(past_tense);
-    timeRect.setRect(0, 0, widthpasttense, _height);
+    timeRect.setRect(0, (height() - heightFont) / 2, widthpasttense, heightFont);
     painter.drawText(timeRect, Qt::AlignRight | Qt::AlignVCenter, past_tense);
     if (!flag_for_slider_geo) {
         flag_for_slider_geo = true;
-        int slider_height = _height / 2;
-        slider->setGeometry(widthpasttense + 5, (_height - slider_height) / 2, _width - widthtotalTime - widthpasttense - 10, slider_height);
+        slider->setGeometry(widthpasttense + 5, (height() - heightFont + heightFont / 2) / 2, width() - widthtotalTime - widthpasttense - 10, height());
     }
 }
 
