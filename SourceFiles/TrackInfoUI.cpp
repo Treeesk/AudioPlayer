@@ -5,8 +5,8 @@
 #include <QDebug>
 #include <QString>
 
-TrackInfoWidget::TrackInfoWidget(const track& trk, QWidget *parent): QWidget(parent) {
-    setFixedSize(sizecover, sizecover + 70);
+TrackInfoWidget::TrackInfoWidget(const track& trk, const int& _width, const int& _height, QWidget *parent): QWidget(parent) {
+    setFixedSize(_width, _height);
     pixmapcover = QPixmap::fromImage(trk.cover);
     artist = trk._artist;
     title = trk._title;
@@ -16,7 +16,7 @@ TrackInfoWidget::TrackInfoWidget(const track& trk, QWidget *parent): QWidget(par
 
 void TrackInfoWidget::paintEvent(QPaintEvent* event) {
     QPainter painter(this);
-    QRect coverRect((width() - sizecover) / 2.0, 0, sizecover, sizecover); // размер 200x200, начало в 0 0
+    QRect coverRect((width() - sizecover) / 2.0, 0, sizecover, sizecover); // размер 200x200, начало в середина выделенного прос-ва, 0
     painter.setPen(Qt::black);
     painter.setRenderHint(QPainter::Antialiasing);
     painter.drawPixmap(coverRect, pixmapcover);
@@ -47,6 +47,47 @@ TrackTime::TrackTime(const int& duration, const int& width, const int& height, Q
     currenttime = 0;
     slider = new QSlider(Qt::Horizontal, this);
     slider->setRange(0, totaltime * 2);
+    slider->setValue(0);
+    slider->setSingleStep(2);
+    slider->setStyleSheet(R"(
+        /* Линия трека(часть которая еще не проиграна) */
+        QSlider::groove:horizontal {
+            border: none;
+            height: 4px;
+            background: black;
+            border-radius: 2px;
+            padding: 0px;
+            margin: 0px;
+        }
+
+        /* Часть которая проиграна(белая полоса) */
+        QSlider::sub-page:horizontal {
+            background: white;
+            border-radius: 2px;
+            height: 4px;
+            margin: 0px;
+        }
+        /* Ползунок по умолчанию */
+        QSlider::handle:horizontal {
+            background: transparent;
+            border: none;
+            width: 0px;
+            height: 0px;
+            border-radius: 0px;
+            margin: 0px;
+        }
+
+        /* Ползунок когда слайдер активен (зажат) */
+        QSlider::handle:horizontal:pressed {
+            background: white;
+            border: none;
+            width: 10px;
+            height: 10px;
+            border-radius: 5px;
+            margin: -3px 0;
+        }
+    )");
+
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &TrackTime::changetime);
 }
@@ -79,14 +120,15 @@ void TrackTime::paintEvent(QPaintEvent* event) {
     painter.drawText(timeRect, Qt::AlignRight | Qt::AlignVCenter, past_tense);
     if (!flag_for_slider_geo) {
         flag_for_slider_geo = true;
-        slider->setGeometry(widthpasttense + 5, (height() - heightFont + heightFont / 2) / 2, width() - widthtotalTime - widthpasttense - 10, height());
+        slider->setGeometry(widthpasttense + 5, (height() - heightFont + heightFont / 2) / 2 - 1.5, width() - widthtotalTime - widthpasttense - 10, height());
     }
 }
 
 void TrackTime::changetime() {
     currenttime++;
+    slider->setValue(currenttime * 2);
     update();
-    if (currenttime == totaltime) {
+    if (currenttime >= totaltime) {
         emit endtrack();
     }
 }
@@ -94,6 +136,8 @@ void TrackTime::changetime() {
 void TrackTime::settime(const int& duration) {
     totaltime = duration;
     launch = false;
+    slider->setRange(0, totaltime * 2);
+    slider->setValue(0);
     start();
     update();
 }

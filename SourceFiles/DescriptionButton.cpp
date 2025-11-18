@@ -1,5 +1,4 @@
 #include "DescriptionButton.h"
-#include <QHBoxLayout>
 #include <QPainter>
 #include <QPainterPath>
 

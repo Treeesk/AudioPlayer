@@ -12,6 +12,8 @@ private:
     PlayerControlsWidget* pcw;
     MusicDataManager* _mdm;
     TrackInfoWidget* trif;
+    int trif_width;
+    int trif_height;
     void UpdateScreenPos();
     void create_connections();
 protected:

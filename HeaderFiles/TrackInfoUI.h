@@ -35,7 +35,7 @@ private:
     int sizecover = 200;
 public:
     TrackTime* time;
-    TrackInfoWidget(const track& trk, QWidget *parent = nullptr);
+    TrackInfoWidget(const track& trk, const int& _width, const int& _height, QWidget *parent = nullptr);
 protected:
     void paintEvent(QPaintEvent* event);
 public slots:
