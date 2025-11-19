@@ -13,7 +13,7 @@
 #include <id3v1tag.h>
 #include <QDebug>
 #include <oggflacfile.h>
-#include "PlayAudio.h"
+#include "DataManager.h"
 #include <cmath>
 
 #include <QFile>
@@ -21,7 +21,7 @@ void track::loadtrackdata(const char* pict, int pic_size, TagLib::String artist,
     _title = QString::fromStdString(title.to8Bit(true));
     _artist = QString::fromStdString(artist.to8Bit(true));
     if (duration == 0) {
-        int dur = int(std::ceil(GetDurationWithFFprobe(_path.c_str())));
+        int dur = int(std::ceil(GetDuration(_path.c_str())));
         if (dur == -1) {
             _duration = 180;
         }

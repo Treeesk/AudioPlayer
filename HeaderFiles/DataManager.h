@@ -2,6 +2,9 @@
 #define DATAMANAGER_H
 #include <QObject>
 #include "track.h"
+#include "PlayAudio.h"
+double GetDuration(const char* path);
+
 class MusicDataManager: public QObject {
     Q_OBJECT
 public:
@@ -23,6 +26,7 @@ private:
     int _currenttrackind = -1;
     bool _isplaying = false;
     bool launchtrack = false;
+    Player player;
 };
 
 #endif // DATAMANAGER_H

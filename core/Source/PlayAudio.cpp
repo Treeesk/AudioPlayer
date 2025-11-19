@@ -1,40 +1,24 @@
 #include "PlayAudio.h"
 #include "Errors.h"
 #include <string>
-#include <queue>
-#include <vector>
-#include <mutex>
-#include <condition_variable>
-extern "C" {
-#include <libavcodec/avcodec.h>
-#include <libavformat/avformat.h>
-#include <libavutil/avutil.h>
-#include <libswresample/swresample.h>
-}
 
-std::queue<std::vector<uint8_t>> que;
-std::mutex mtx;
-std::atomic_bool isplaying;
-std::condition_variable pause_cv;
-std::mutex pause_mtx;
-AudioQueueRef queue;
-
-void AudioCallbackF(void* UserData, AudioQueueRef inAQ, AudioQueueBufferRef inBuffer) {
-    std::lock_guard<std::mutex> lock(mtx);
-    if (que.empty()) {
+void Player::AudioCallbackF(void* UserData, AudioQueueRef inAQ, AudioQueueBufferRef inBuffer) {
+    AudioContext* ctx = static_cast<AudioContext*>(UserData);
+    std::lock_guard<std::mutex> lock(*(ctx->mtx));
+    if (ctx->que->empty()) {
         memset(inBuffer->mAudioData, 0, inBuffer->mAudioDataBytesCapacity);
         inBuffer->mAudioDataByteSize = inBuffer->mAudioDataBytesCapacity;
     } else {
-        auto& front = que.front();
+        auto& front = ctx->que->front();
         size_t bytes_copy = front.size();
         memcpy(inBuffer->mAudioData, front.data(), bytes_copy);
         inBuffer->mAudioDataByteSize = bytes_copy;
-        que.pop();
+        ctx->que->pop();
     }
     AudioQueueEnqueueBuffer(inAQ, inBuffer, 0, NULL); // передача pcm из que в queue
 }
 
-void PlayPcm() {
+void Player::PlayPCM() {
     AudioStreamBasicDescription format = {0};
     format.mSampleRate = 44100;
     format.mFormatID = kAudioFormatLinearPCM;
@@ -45,7 +29,8 @@ void PlayPcm() {
     format.mBytesPerFrame = 4;
     format.mBytesPerPacket = 4;
 
-    AudioQueueNewOutput(&format, AudioCallbackF, nullptr, NULL, NULL, 0, &queue);
+    AudioContext* ctx = new AudioContext{&que, &mtx};
+    AudioQueueNewOutput(&format, AudioCallbackF, ctx, NULL, NULL, 0, &queue);
 
     for (int i = 0; i < 3; ++i) {
         AudioQueueBufferRef buffer;
@@ -57,9 +42,9 @@ void PlayPcm() {
     AudioQueueStart(queue, nullptr);
 }
 
-void PlayAudio(const char* path) {
+void Player::PlayAudio(const char* path) {
     isplaying = true;
-    AVFormatContext* fmt_ctx = nullptr;
+    fmt_ctx = nullptr;
     int check_err;
     check_err = avformat_open_input(&fmt_ctx, path, NULL, NULL);
     averr_process(check_err);
@@ -70,14 +55,13 @@ void PlayAudio(const char* path) {
     int stream_index = av_find_best_stream(fmt_ctx, AVMEDIA_TYPE_AUDIO, -1, -1, nullptr, 0);
     averr_process(stream_index);
     // указатель на выбранный аудио поток
-    AVStream* audio_stream = fmt_ctx->streams[stream_index];
+    audio_stream = fmt_ctx->streams[stream_index];
 
     // Получаем декодер
     const AVCodec* codec;
     if ((codec = avcodec_find_decoder(audio_stream->codecpar->codec_id)) == nullptr) {
         throw PlayAudioErr("Could not find codec");
     }
-    AVCodecContext* codec_ctx; // будет храниться состояние декодера(состояние потока, внутренние буфера и тд)
     if ((codec_ctx = avcodec_alloc_context3(codec)) == nullptr) {
         throw PlayAudioErr("Could not allocate audio codec context");
     }
@@ -115,14 +99,14 @@ void PlayAudio(const char* path) {
     }
 
 
-    PlayPcm(); // запускаем сразу
+    PlayPCM(); // запускаем сразу
 
     // цикл чтения файла
     while ((check_err = av_read_frame(fmt_ctx, pkt)) == 0) {
         {
             // Остановка декодировая на момент паузы, чтобы не тратить ресурсы устройства
             std::unique_lock<std::mutex> lock(pause_mtx);
-            pause_cv.wait(lock, []{return isplaying.load();});
+            pause_cv.wait(lock, [this]{return isplaying.load();});
         }
         if (pkt->stream_index == stream_index) {
             check_err = avcodec_send_packet(codec_ctx, pkt);
@@ -170,7 +154,7 @@ void PlayAudio(const char* path) {
     avformat_close_input(&fmt_ctx);
 }
 
-double GetDurationWithFFprobe(const char* filename) {
+double Player::GetDurationWithFFprobe(const char* filename) {
     AVFormatContext* fmt_ctx = nullptr;
     AVDictionary* options = nullptr;
 
@@ -215,7 +199,7 @@ double GetDurationWithFFprobe(const char* filename) {
     return duration;
 }
 
-void ResumePlay() {
+void Player::ResumePlay() {
     if (!isplaying) {
         isplaying = true;
         pause_cv.notify_all();
@@ -223,14 +207,14 @@ void ResumePlay() {
     }
 }
 
-void Pause() {
+void Player::Pause() {
     if (isplaying) {
         isplaying = false;
         AudioQueuePause(queue);
     }
 }
 
-void ResetPlay() {
+void Player::ResetPlay() {
     // Очищение всех данных, чтобы новый трек не наложился на старый и тд.
     // Вызывать перед запуском нового трека
     if (queue) {
@@ -245,7 +229,7 @@ void ResetPlay() {
     }
 }
 
-void averr_process(int err) {
+void Player::averr_process(int err) {
     if (err < 0) {
         char errbuf[256];
         av_strerror(err, errbuf, sizeof(errbuf));

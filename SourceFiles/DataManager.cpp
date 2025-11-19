@@ -1,7 +1,6 @@
 #include "DataManager.h"
 #include <iostream>
 #include "AudioFileLoader.h"
-#include "PlayAudio.h"
 #include "TrackInfoUI.h"
 
 void MusicDataManager::loadfromdata(const char* path_to_dir) {
@@ -31,17 +30,17 @@ void MusicDataManager::play() {
     _isplaying = true;
     if (!launchtrack) {
         launchtrack = true;
-        ResetPlay();
-        PlayAudio(tracks[_currenttrackind].getpath().c_str());
+        player.ResetPlay();
+        player.PlayAudio(tracks[_currenttrackind].getpath().c_str());
     }
     else {
-        ResumePlay();
+        player.ResumePlay();
     }
 }
 
 void MusicDataManager::pause() {
     _isplaying = false;
-    Pause();
+    player.Pause();
 }
 
 void MusicDataManager::next() {
@@ -66,4 +65,8 @@ void MusicDataManager::prev() {
     }
     emit currenttrackchange(currenttrack());
     play();
+}
+
+double GetDuration(const char* path){
+    return Player::GetDurationWithFFprobe(path);
 }
