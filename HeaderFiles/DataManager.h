@@ -18,6 +18,7 @@ public slots:
     void pause();
     void next();
     void prev();
+    void seekingAudio(int value);
 signals:
     void currenttrackchange(const track& trk);
 

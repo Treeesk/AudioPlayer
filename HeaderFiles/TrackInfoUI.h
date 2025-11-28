@@ -13,6 +13,7 @@ private:
     QSlider* slider;
     bool launch = false;
     bool flag_for_slider_geo = false;
+    bool seeking = false;
 public:
     TrackTime(const int& duration, const int& width, const int& height, QWidget *parent = nullptr);
     void settime(const int& duration);
@@ -22,8 +23,10 @@ public slots:
     void changetime();
     void start();
     void pause();
+    void setnewTime(int value);
 signals:
     void endtrack();
+    void setTimeTrack(int value);
 };
 
 class TrackInfoWidget: public QWidget{

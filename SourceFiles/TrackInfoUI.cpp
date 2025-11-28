@@ -90,6 +90,7 @@ TrackTime::TrackTime(const int& duration, const int& width, const int& height, Q
 
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &TrackTime::changetime);
+    connect(slider, &QSlider::sliderMoved, this, &TrackTime::setnewTime);
 }
 
 void TrackTime::paintEvent(QPaintEvent* event) {
@@ -125,21 +126,26 @@ void TrackTime::paintEvent(QPaintEvent* event) {
 }
 
 void TrackTime::changetime() {
-    currenttime++;
-    slider->setValue(currenttime * 2);
-    update();
-    if (currenttime >= totaltime) {
-        emit endtrack();
+    if (!seeking) {
+        currenttime++;
+        slider->setValue(currenttime * 2);
+        update();
+        if (currenttime >= totaltime) {
+            emit endtrack();
+        }
     }
 }
 
-void TrackTime::settime(const int& duration) {
-    totaltime = duration;
-    launch = false;
-    slider->setRange(0, totaltime * 2);
-    slider->setValue(0);
-    start();
+void TrackTime::setnewTime(int value) {
+    seeking = true;
+    if (value >= totaltime) {
+        emit endtrack();
+        return;
+    }
+    currenttime = value;
     update();
+    emit setTimeTrack(value);
+    seeking = false;
 }
 
 void TrackTime::start(){

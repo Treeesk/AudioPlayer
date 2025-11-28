@@ -67,6 +67,10 @@ void MusicDataManager::prev() {
     play();
 }
 
+void seekingAudio(int value) {
+    // ВЫЗОВ ФУНКЦИИ ПЕРЕМОТКИ ИЗ ДВИЖКА
+}
+
 double GetDuration(const char* path){
     return Player::GetDurationWithFFprobe(path);
 }
