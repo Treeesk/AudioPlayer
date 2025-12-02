@@ -3,12 +3,15 @@
 #include <QObject>
 #include "track.h"
 #include "PlayAudio.h"
+#include "AudioWrapper.h"
+#include "QThread"
 double GetDuration(const char* path);
 
 class MusicDataManager: public QObject {
     Q_OBJECT
 public:
-    MusicDataManager(QObject* parent = nullptr): QObject(parent) {}
+    MusicDataManager(QObject* parent = nullptr);
+    ~MusicDataManager();
     void loadfromdata(const char* path_to_dir);
     const track& currenttrack();
     const QVector<track>& alltracks();
@@ -21,13 +24,18 @@ public slots:
     void seekingAudio(int value);
 signals:
     void currenttrackchange(const track& trk);
-
+    void playRequested(const char* path);
+    void resumeRequested();
+    void pauseRequested();
+    void seekRequested(int value);
 private:
     QVector<track> tracks;
     int _currenttrackind = -1;
     bool _isplaying = false;
     bool launchtrack = false;
-    Player player;
+    // Player player;
+    AudioWorker* worker;
+    QThread audioThread;
 };
 
 #endif // DATAMANAGER_H

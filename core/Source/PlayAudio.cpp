@@ -43,6 +43,7 @@ void Player::PlayPCM() {
 }
 
 void Player::PlayAudio(const char* path) {
+    current_path = path;
     isplaying = true;
     fmt_ctx = nullptr;
     int check_err;
@@ -52,7 +53,7 @@ void Player::PlayAudio(const char* path) {
     check_err = avformat_find_stream_info(fmt_ctx, 0);
     averr_process(check_err);
     // поиск лучшего потока нужен, тк. необязательно у нас есть только аудио дорожка
-    int stream_index = av_find_best_stream(fmt_ctx, AVMEDIA_TYPE_AUDIO, -1, -1, nullptr, 0);
+    stream_index = av_find_best_stream(fmt_ctx, AVMEDIA_TYPE_AUDIO, -1, -1, nullptr, 0);
     averr_process(stream_index);
     // указатель на выбранный аудио поток
     audio_stream = fmt_ctx->streams[stream_index];
@@ -73,7 +74,7 @@ void Player::PlayAudio(const char* path) {
     }
 
     // audio resampling parametres (чтобы приводить все файлы к одному виду)
-    SwrContext* swr_context = nullptr;
+    swr_context = nullptr;
     AVChannelLayout channel_layout;
     av_channel_layout_default(&channel_layout, 2); // stereo
     swr_alloc_set_opts2(
@@ -108,6 +109,46 @@ void Player::PlayAudio(const char* path) {
             std::unique_lock<std::mutex> lock(pause_mtx);
             pause_cv.wait(lock, [this]{return isplaying.load();});
         }
+        if (need_seek.load()) {
+            std::cout << "=== SEEK PROCESSING ===" << std::endl;
+
+            // 1. Очищаем PCM очередь
+            {
+                std::lock_guard<std::mutex> lock(mtx);
+                que = std::queue<std::vector<uint8_t>>();
+            }
+
+            // 2. Сбрасываем декодер и ресемплер
+            avcodec_flush_buffers(codec_ctx);
+            swr_close(swr_context);
+            swr_init(swr_context);
+
+            // 3. Выполняем seek
+            int64_t target_pts = (int64_t)(seek_target_time / av_q2d(audio_stream->time_base));
+            int err = av_seek_frame(fmt_ctx, stream_index, target_pts, AVSEEK_FLAG_BACKWARD);
+
+            if (err >= 0) {
+                // 4. Пропускаем пакеты до нужного момента
+                av_packet_unref(pkt);
+                while (av_read_frame(fmt_ctx, pkt) == 0) {
+                    if (pkt->stream_index == stream_index) {
+                        double packet_time = pkt->pts * av_q2d(audio_stream->time_base);
+                        if (packet_time >= seek_target_time - 0.5) {
+                            break; // Нашли нужный пакет, продолжим декодирование
+                        }
+                    }
+                    av_packet_unref(pkt);
+                }
+            }
+
+            // 5. Сбрасываем флаг (AudioQueue УЖЕ работает, не перезапускаем)
+            need_seek.store(false);
+
+            // 6. Продолжаем декодирование с текущего пакета
+            continue;
+        }
+
+
         if (pkt->stream_index == stream_index) {
             check_err = avcodec_send_packet(codec_ctx, pkt);
             if (check_err < 0 && check_err != AVERROR_EOF && check_err != AVERROR(EAGAIN)) {
@@ -199,6 +240,49 @@ double Player::GetDurationWithFFprobe(const char* filename) {
     return duration;
 }
 
+void Player::SeekAudio(int target_time) {
+    std::cout << "SeekAudio called:" << target_time;
+
+    // 1. Сначала очищаем очередь
+    // {
+    //     std::lock_guard<std::mutex> lock(mtx);
+    //     que = std::queue<std::vector<uint8_t>>();
+    //     std::cout << "Queue cleared";
+    // }
+
+    // 2. Устанавливаем цель перемотки
+    seek_target_time = target_time;
+    need_seek.store(true);
+
+    // 3. Гарантируем что воспроизведение активно
+    isplaying.store(true);
+
+    // 4. Будим поток если он в паузе
+    pause_cv.notify_all();
+
+    if (swr_context) {
+        swr_free(&swr_context);
+        swr_context = nullptr;
+    }
+    if (codec_ctx) {
+        avcodec_free_context(&codec_ctx);
+        codec_ctx = nullptr;
+    }
+    if (fmt_ctx) {
+        // avformat_close_input(&fmt_ctx);
+        // fmt_ctx = nullptr;
+        avformat_flush(fmt_ctx);
+    }
+    if (audio_stream) {
+        audio_stream = nullptr;
+    }
+    stream_index = -1;
+    ResetPlay();
+    PlayAudio(current_path);
+    std::cout << "Seek initiated";
+}
+
+
 void Player::ResumePlay() {
     if (!isplaying) {
         isplaying = true;
@@ -219,6 +303,7 @@ void Player::ResetPlay() {
     // Вызывать перед запуском нового трека
     if (queue) {
         AudioQueueStop(queue, true);
+        AudioQueueReset(queue);
         AudioQueueDispose(queue, true);
         queue = nullptr;
     }

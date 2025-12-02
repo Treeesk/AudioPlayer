@@ -3,6 +3,22 @@
 #include "AudioFileLoader.h"
 #include "TrackInfoUI.h"
 
+
+MusicDataManager::MusicDataManager(QObject* parent): QObject(parent) {
+    worker = new AudioWorker();
+    worker->moveToThread(&audioThread);
+    connect(this, &MusicDataManager::playRequested, worker, &AudioWorker::playTrack);
+    connect(this, &MusicDataManager::resumeRequested, worker, &AudioWorker::ResumeTrack);
+    connect(this, &MusicDataManager::pauseRequested, worker, &AudioWorker::pauseTrack);
+    connect(this, &MusicDataManager::seekRequested, worker, &AudioWorker::seekAudio);
+    audioThread.start();
+}
+
+MusicDataManager::~MusicDataManager() {
+    audioThread.quit();
+    audioThread.wait();
+}
+
 void MusicDataManager::loadfromdata(const char* path_to_dir) {
     std::deque<std::filesystem::path> paths_to_files = GetAudioFiles(path_to_dir);
     tracks.reserve(paths_to_files.size());
@@ -30,17 +46,20 @@ void MusicDataManager::play() {
     _isplaying = true;
     if (!launchtrack) {
         launchtrack = true;
-        player.ResetPlay();
-        player.PlayAudio(tracks[_currenttrackind].getpath().c_str());
+       // player.ResetPlay();
+        emit playRequested(tracks[_currenttrackind].getpath().c_str());
+        //player.PlayAudio(tracks[_currenttrackind].getpath().c_str());
     }
     else {
-        player.ResumePlay();
+        //player.ResumePlay();
+        emit resumeRequested();
     }
 }
 
 void MusicDataManager::pause() {
     _isplaying = false;
-    player.Pause();
+    // player.Pause();
+    emit pauseRequested();
 }
 
 void MusicDataManager::next() {
@@ -67,8 +86,9 @@ void MusicDataManager::prev() {
     play();
 }
 
-void seekingAudio(int value) {
+void MusicDataManager::seekingAudio(int value) {
     // ВЫЗОВ ФУНКЦИИ ПЕРЕМОТКИ ИЗ ДВИЖКА
+    emit seekRequested(value);
 }
 
 double GetDuration(const char* path){

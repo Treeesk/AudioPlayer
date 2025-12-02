@@ -14,6 +14,8 @@ extern "C" {
 
 class Player {
 private:
+    std::atomic<bool> need_seek = false;
+    std::atomic<int> seek_target_time;
     std::queue<std::vector<uint8_t>> que;
     std::mutex mtx;
     std::atomic_bool isplaying;
@@ -22,6 +24,8 @@ private:
     AudioQueueRef queue;
     AVFormatContext* fmt_ctx;
     AVStream* audio_stream;
+    SwrContext* swr_context;
+    int stream_index;
     AVCodecContext* codec_ctx; // будет храниться состояние декодера(состояние потока, внутренние буфера и тд)
     struct AudioContext {
         std::queue<std::vector<uint8_t>>* que;
@@ -30,12 +34,15 @@ private:
     void PlayPCM();
     static void AudioCallbackF(void* UD, AudioQueueRef inAQ, AudioQueueBufferRef inBuffer);
     void averr_process(int err);
+
+    const char* current_path;
 public:
     Player() {}
     void PlayAudio(const char *fp);
     void Pause();
     void ResumePlay();
     void ResetPlay();
+    void SeekAudio(int target_time);
     static double GetDurationWithFFprobe(const char* filename);
 };
 
