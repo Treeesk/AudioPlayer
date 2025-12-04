@@ -9,7 +9,7 @@ public:
     AudioWorker(): player(new Player) {}
     ~AudioWorker() {delete player;}
 public slots:
-    void seekAudio(int value);
+    void seekAudio(int value, const char* path);
     void playTrack(const char* path);
     void ResumeTrack();
     void pauseTrack();

@@ -37,5 +37,6 @@ public slots:
     void PlayStopclick(bool checked);
     void NextTrackclick();
     void PrevTrackclick();
+    void ChangeIcon();
 };
 #endif // DESCRIPTIONBUTTON_H

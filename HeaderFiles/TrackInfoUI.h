@@ -27,6 +27,7 @@ public slots:
 signals:
     void endtrack();
     void setTimeTrack(int value);
+    void SeekChangeIcon();
 };
 
 class TrackInfoWidget: public QWidget{

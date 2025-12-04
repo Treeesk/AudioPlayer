@@ -42,7 +42,7 @@ public:
     void Pause();
     void ResumePlay();
     void ResetPlay();
-    void SeekAudio(int target_time);
+    void SeekAudio(int target_time, const char* path);
     static double GetDurationWithFFprobe(const char* filename);
 };
 

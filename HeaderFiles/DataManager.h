@@ -27,13 +27,12 @@ signals:
     void playRequested(const char* path);
     void resumeRequested();
     void pauseRequested();
-    void seekRequested(int value);
+    void seekRequested(int value, const char* path);
 private:
     QVector<track> tracks;
     int _currenttrackind = -1;
     bool _isplaying = false;
     bool launchtrack = false;
-    // Player player;
     AudioWorker* worker;
     QThread audioThread;
 };

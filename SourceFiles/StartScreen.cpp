@@ -36,4 +36,6 @@ void StartScreenWidget::create_connections() {
     connect(pcw, &PlayerControlsWidget::onPauseclicked, trif->time, &TrackTime::pause);
     connect(trif->time, &TrackTime::endtrack, _mdm, &MusicDataManager::next);
     connect(trif->time, &TrackTime::setTimeTrack, _mdm, &MusicDataManager::seekingAudio);
+    connect(trif->time, &TrackTime::SeekChangeIcon, pcw, &PlayerControlsWidget::ChangeIcon);
 }
+

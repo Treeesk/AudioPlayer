@@ -67,23 +67,22 @@ void PlayerControlsWidget::PlayStopclick(bool isPlaying) {
 }
 
 void PlayerControlsWidget::NextTrackclick() {
+    ChangeIcon();
+    emit onNextclicked();
+}
+
+void PlayerControlsWidget::PrevTrackclick(){
+    ChangeIcon();
+    emit onPrevclicked();
+}
+
+void PlayerControlsWidget::ChangeIcon() {
     if (!PlayStopTrack->isChecked()) { // проверяем состояние кнопки
         PlayStopTrack->blockSignals(true); // выключили сигналы от PlayStopTrack
         PlayStopTrack->setChecked(true);
         PlayStopTrack->setIcon(stopIcon);
         PlayStopTrack->blockSignals(false);
     }
-    emit onNextclicked();
-}
-
-void PlayerControlsWidget::PrevTrackclick(){
-    if (!PlayStopTrack->isChecked()) {
-        PlayStopTrack->blockSignals(true);
-        PlayStopTrack->setChecked(true);
-        PlayStopTrack->setIcon(stopIcon);
-        PlayStopTrack->blockSignals(false);
-    }
-    emit onPrevclicked();
 }
 
 bool RoundPushButton::hitButton(const QPoint& pos) const {

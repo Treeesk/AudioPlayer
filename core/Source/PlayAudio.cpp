@@ -110,7 +110,6 @@ void Player::PlayAudio(const char* path) {
             pause_cv.wait(lock, [this]{return isplaying.load();});
         }
         if (need_seek.load()) {
-            std::cout << "=== SEEK PROCESSING ===" << std::endl;
 
             // 1. Очищаем PCM очередь
             {
@@ -240,24 +239,15 @@ double Player::GetDurationWithFFprobe(const char* filename) {
     return duration;
 }
 
-void Player::SeekAudio(int target_time) {
-    std::cout << "SeekAudio called:" << target_time;
-
-    // 1. Сначала очищаем очередь
-    // {
-    //     std::lock_guard<std::mutex> lock(mtx);
-    //     que = std::queue<std::vector<uint8_t>>();
-    //     std::cout << "Queue cleared";
-    // }
-
-    // 2. Устанавливаем цель перемотки
+void Player::SeekAudio(int target_time, const char* path) {
+    // 1. Устанавливаем цель перемотки
     seek_target_time = target_time;
     need_seek.store(true);
 
-    // 3. Гарантируем что воспроизведение активно
+    // 2. Гарантируем что воспроизведение активно
     isplaying.store(true);
 
-    // 4. Будим поток если он в паузе
+    // 3. Будим поток если он в паузе
     pause_cv.notify_all();
 
     if (swr_context) {
@@ -278,8 +268,7 @@ void Player::SeekAudio(int target_time) {
     }
     stream_index = -1;
     ResetPlay();
-    PlayAudio(current_path);
-    std::cout << "Seek initiated";
+    PlayAudio(path);
 }
 
 

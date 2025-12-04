@@ -140,6 +140,7 @@ void TrackTime::changetime() {
 
 void TrackTime::setnewTime(int value) {
     seeking = true;
+    emit SeekChangeIcon();
     if (value / 2 >= totaltime) {
         emit endtrack();
         return;

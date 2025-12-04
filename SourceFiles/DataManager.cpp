@@ -3,7 +3,6 @@
 #include "AudioFileLoader.h"
 #include "TrackInfoUI.h"
 
-
 MusicDataManager::MusicDataManager(QObject* parent): QObject(parent) {
     worker = new AudioWorker();
     worker->moveToThread(&audioThread);
@@ -46,19 +45,15 @@ void MusicDataManager::play() {
     _isplaying = true;
     if (!launchtrack) {
         launchtrack = true;
-       // player.ResetPlay();
         emit playRequested(tracks[_currenttrackind].getpath().c_str());
-        //player.PlayAudio(tracks[_currenttrackind].getpath().c_str());
     }
     else {
-        //player.ResumePlay();
         emit resumeRequested();
     }
 }
 
 void MusicDataManager::pause() {
     _isplaying = false;
-    // player.Pause();
     emit pauseRequested();
 }
 
@@ -87,8 +82,9 @@ void MusicDataManager::prev() {
 }
 
 void MusicDataManager::seekingAudio(int value) {
-    // ВЫЗОВ ФУНКЦИИ ПЕРЕМОТКИ ИЗ ДВИЖКА
-    emit seekRequested(value);
+    _isplaying = true;
+    launchtrack = true;
+    emit seekRequested(value, tracks[_currenttrackind].getpath().c_str());
 }
 
 double GetDuration(const char* path){
