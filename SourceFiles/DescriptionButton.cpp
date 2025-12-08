@@ -11,14 +11,14 @@ PlayerControlsWidget::PlayerControlsWidget(QWidget* parent): QWidget(parent) {
     NextTrack = new RoundPushButton(this);
     PrevTrack = new RoundPushButton(this);
     NextTrack->setIcon(nexttrackIcon);
-    NextTrack->setIconSize(QSize(35, 35)); // тест
-    NextTrack->setFixedSize(35, 35); // тест
+    NextTrack->setIconSize(QSize(30, 30)); // тест
+    NextTrack->setFixedSize(30, 30); // тест
     NextTrack->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     NextTrack->setCheckable(true);
     connect(NextTrack, &QPushButton::toggled, this, &PlayerControlsWidget::NextTrackclick);
 
-    PrevTrack->setIconSize(QSize(35, 35)); // тест
-    PrevTrack->setFixedSize(35, 35); // тест
+    PrevTrack->setIconSize(QSize(30, 30)); // тест
+    PrevTrack->setFixedSize(30, 30); // тест
     PrevTrack->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     PrevTrack->setIcon(prevtrackIcon);
     PrevTrack->setCheckable(true);
@@ -26,8 +26,8 @@ PlayerControlsWidget::PlayerControlsWidget(QWidget* parent): QWidget(parent) {
 
     PlayStopTrack->setCheckable(true);
     PlayStopTrack->setIcon(playIcon);
-    PlayStopTrack->setIconSize(QSize(35, 35)); // тест
-    PlayStopTrack->setFixedSize(35, 35); // тест
+    PlayStopTrack->setIconSize(QSize(30, 30)); // тест
+    PlayStopTrack->setFixedSize(30, 30); // тест
     PlayStopTrack->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(PlayStopTrack, &QPushButton::toggled, this, &PlayerControlsWidget::PlayStopclick);
     UpdateButtonsGeo();

@@ -14,6 +14,7 @@ extern "C" {
 
 class Player {
 private:
+    std::atomic<double> volume = 1.0;
     std::atomic<bool> need_seek = false;
     std::atomic<int> seek_target_time;
     std::queue<std::vector<uint8_t>> que;
@@ -43,6 +44,7 @@ public:
     void ResumePlay();
     void ResetPlay();
     void SeekAudio(int target_time, const char* path);
+    void changeVol(int vol);
     static double GetDurationWithFFprobe(const char* filename);
 };
 

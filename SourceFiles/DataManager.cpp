@@ -10,6 +10,7 @@ MusicDataManager::MusicDataManager(QObject* parent): QObject(parent) {
     connect(this, &MusicDataManager::resumeRequested, worker, &AudioWorker::ResumeTrack);
     connect(this, &MusicDataManager::pauseRequested, worker, &AudioWorker::pauseTrack);
     connect(this, &MusicDataManager::seekRequested, worker, &AudioWorker::seekAudio);
+    connect(this, &MusicDataManager::NewVolRequested, worker, &AudioWorker::newVolume);
     audioThread.start();
 }
 
@@ -85,6 +86,10 @@ void MusicDataManager::seekingAudio(int value) {
     _isplaying = true;
     launchtrack = true;
     emit seekRequested(value, tracks[_currenttrackind].getpath().c_str());
+}
+
+void MusicDataManager::setVolume(int value) {
+    emit NewVolRequested(value);
 }
 
 double GetDuration(const char* path){

@@ -16,3 +16,7 @@ void AudioWorker::playTrack(const char* path) {
     player->ResetPlay();
     player->PlayAudio(path);
 }
+
+void AudioWorker::newVolume(int value) {
+    player->changeVol(value);
+}

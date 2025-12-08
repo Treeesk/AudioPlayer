@@ -22,12 +22,14 @@ public slots:
     void next();
     void prev();
     void seekingAudio(int value);
+    void setVolume(int value);
 signals:
     void currenttrackchange(const track& trk);
     void playRequested(const char* path);
     void resumeRequested();
     void pauseRequested();
     void seekRequested(int value, const char* path);
+    void NewVolRequested(int value);
 private:
     QVector<track> tracks;
     int _currenttrackind = -1;

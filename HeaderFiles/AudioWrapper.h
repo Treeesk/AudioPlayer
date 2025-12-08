@@ -13,6 +13,7 @@ public slots:
     void playTrack(const char* path);
     void ResumeTrack();
     void pauseTrack();
+    void newVolume(int value);
 private:
     Player* player;
 };

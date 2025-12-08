@@ -40,6 +40,7 @@ void Player::PlayPCM() {
         AudioQueueEnqueueBuffer(queue, buffer, 0, NULL);
     }
     AudioQueueStart(queue, nullptr);
+    AudioQueueSetParameter(queue, kAudioQueueParam_Volume, volume.load());
 }
 
 void Player::PlayAudio(const char* path) {
@@ -259,8 +260,6 @@ void Player::SeekAudio(int target_time, const char* path) {
         codec_ctx = nullptr;
     }
     if (fmt_ctx) {
-        // avformat_close_input(&fmt_ctx);
-        // fmt_ctx = nullptr;
         avformat_flush(fmt_ctx);
     }
     if (audio_stream) {
@@ -300,6 +299,14 @@ void Player::ResetPlay() {
         std::lock_guard<std::mutex> lock(mtx);
         std::queue<std::vector<uint8_t>> empty;
         std::swap(que, empty);
+    }
+}
+
+void Player::changeVol(int vol) {
+    double abc = double(vol) / 100;
+    volume.store(abc * abc);
+    if (queue) {
+        AudioQueueSetParameter(queue, kAudioQueueParam_Volume, volume.load());
     }
 }
 

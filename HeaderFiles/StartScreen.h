@@ -3,6 +3,7 @@
 #include "DescriptionButton.h"
 #include "DataManager.h"
 #include "TrackInfoUI.h"
+#include "VolumeSlider.h"
 
 class StartScreenWidget: public QWidget {
     Q_OBJECT
@@ -12,8 +13,11 @@ private:
     PlayerControlsWidget* pcw;
     MusicDataManager* _mdm;
     TrackInfoWidget* trif;
+    volumeSlider* vol;
     int trif_width;
     int trif_height;
+    int vol_width;
+    int vol_height;
     void UpdateScreenPos();
     void create_connections();
 protected:

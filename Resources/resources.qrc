@@ -5,5 +5,7 @@
         <file>Icons/Prev.png</file>
         <file>Icons/Stop.png</file>
         <file>Icons/CoverMus.png</file>
+        <file>Icons/VolumeFirst_cropped_v2.png</file>
+        <file>Icons/VolumeThird_cropped_v2.png</file>
     </qresource>
 </RCC>
