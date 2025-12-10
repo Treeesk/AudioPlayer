@@ -15,8 +15,8 @@
 #include <oggflacfile.h>
 #include "DataManager.h"
 #include <cmath>
-
 #include <QFile>
+
 void track::loadtrackdata(const char* pict, int pic_size, TagLib::String artist, TagLib::String title, int duration) {
     _title = QString::fromStdString(title.to8Bit(true));
     _artist = QString::fromStdString(artist.to8Bit(true));

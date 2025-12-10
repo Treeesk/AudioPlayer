@@ -15,7 +15,7 @@ private:
     QString _title;
     QImage cover; // обложка
     void standartprocessNames(TagLib::Tag* tag, TagLib::String& artist, TagLib::String& title, const std::string& path);
-    friend class TrackInfoWidget;
+    friend class TrackInfoBase;
 public:
     track(std::string p);
     std::string& getpath();

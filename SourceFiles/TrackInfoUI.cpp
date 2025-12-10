@@ -5,12 +5,9 @@
 #include <QDebug>
 #include <QString>
 
-TrackInfoWidget::TrackInfoWidget(const track& trk, const int& _width, const int& _height, QWidget *parent): QWidget(parent) {
+TrackInfoWidget::TrackInfoWidget(const track& trk, const int& _width, const int& _height, QWidget *parent): TrackInfoBase(trk, parent) {
     setFixedSize(_width, _height);
-    pixmapcover = QPixmap::fromImage(trk.cover);
-    artist = trk._artist;
-    title = trk._title;
-    time = new TrackTime(trk._duration, sizecover, 15, this);
+    time = new TrackTime(getDuration(), sizecover, 15, this);
     time->setGeometry(0, sizecover + 5, sizecover, 15);
 }
 
@@ -19,25 +16,23 @@ void TrackInfoWidget::paintEvent(QPaintEvent* event) {
     QRect coverRect((width() - sizecover) / 2.0, 0, sizecover, sizecover); // размер 200x200, начало в середина выделенного прос-ва, 0
     painter.setPen(Qt::black);
     painter.setRenderHint(QPainter::Antialiasing);
-    painter.drawPixmap(coverRect, pixmapcover);
+    painter.drawPixmap(coverRect, getCover());
 
     QFont font("Times New Roman", 16, QFont::DemiBold);
     painter.setFont(font);
     QRect titleRect(0, sizecover + 25, sizecover, 20);
-    painter.drawText(titleRect, Qt::AlignCenter | Qt::TextWordWrap, title);
+    painter.drawText(titleRect, Qt::AlignCenter | Qt::TextWordWrap, getTitle());
 
     font.setPointSize(14);
     font.setWeight(QFont::Normal);
     painter.setFont(font);
     QRect artistRect(0, sizecover + 50, sizecover, 20);
-    painter.drawText(artistRect, Qt::AlignCenter | Qt::TextWordWrap, artist);
+    painter.drawText(artistRect, Qt::AlignCenter | Qt::TextWordWrap, getArtist());
 }
 
 void TrackInfoWidget::setTrack(const track& trk) {
-    pixmapcover = QPixmap::fromImage(trk.cover);
-    artist = trk._artist;
-    title = trk._title;
-    time->settime(trk._duration);
+    changeTrack(trk);
+    time->settime(getDuration());
     update();
 }
 

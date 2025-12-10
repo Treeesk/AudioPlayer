@@ -4,6 +4,7 @@
 #include "track.h"
 #include <QTimer>
 #include <QSlider>
+#include "TrackInfoAbstract.h"
 class TrackTime: public QWidget {
     Q_OBJECT
 private:
@@ -30,18 +31,15 @@ signals:
     void SeekChangeIcon();
 };
 
-class TrackInfoWidget: public QWidget{
+class TrackInfoWidget: public TrackInfoBase {
     Q_OBJECT
 private:
-    QPixmap pixmapcover;
-    QString artist;
-    QString title;
     int sizecover = 200;
 public:
     TrackTime* time;
     TrackInfoWidget(const track& trk, const int& _width, const int& _height, QWidget *parent = nullptr);
 protected:
-    void paintEvent(QPaintEvent* event);
+    void paintEvent(QPaintEvent* event) override;
 public slots:
     void setTrack(const track& trk);
 };
