@@ -1,12 +1,11 @@
 #ifndef SCROLLBARTRACKS_H
 #define SCROLLBARTRACKS_H
 #include "TrackInfoAbstract.h"
-#include <vector>
+#include <QVector>
+#include <QBoxLayout>
 
 class TrackInfoRepresentation: public TrackInfoBase {
     Q_OBJECT
-private:
-    int sizecover = 100;
 public:
     TrackInfoRepresentation(const track& trk, QWidget* parent = nullptr);
 protected:
@@ -17,8 +16,12 @@ class TrackInfoScroll: public QWidget {
     Q_OBJECT
 private:
     std::vector<TrackInfoRepresentation*> track_widgets;
+    QVBoxLayout* layout;
 public:
-    TrackInfoScroll(const std::vector<track>& tracks, int width, int height, QWidget* parent = nullptr);
+    TrackInfoScroll(const QVector<track>& tracks, QWidget* parent = nullptr);
+    void loadTracks(const QVector<track>& tracks);
+protected:
+    void resizeEvent(QResizeEvent* event);
 };
 
 #endif // SCROLLBARTRACKS_H

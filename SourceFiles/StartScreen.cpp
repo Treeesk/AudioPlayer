@@ -1,4 +1,5 @@
 #include "StartScreen.h"
+#include <QDebug>
 
 StartScreenWidget::StartScreenWidget(MusicDataManager* mdm, QWidget* parent): QWidget(parent) {
     _mdm = mdm;
@@ -11,6 +12,8 @@ StartScreenWidget::StartScreenWidget(MusicDataManager* mdm, QWidget* parent): QW
     vol_width = 200;
     vol_height = 20;
     vol = new volumeSlider(vol_width, vol_height, this);
+
+    scrollPanel = new TrackInfoScroll(_mdm->alltracks(), this);
 
     create_connections();
     UpdateScreenPos();
@@ -30,6 +33,8 @@ void StartScreenWidget::UpdateScreenPos() {
     trif->setGeometry(centerX, startY, trif_width, trif_height);
     pcw->setGeometry(pcwCenterX, pcwY, pcw->WidthPCW(), pcwHeight);
     vol->setGeometry(centerX, volY, vol_width, vol_height);
+      //qDebug() << width() / 4 << ' ' << height() << '\n';
+    scrollPanel->setGeometry(0, 0, width() / 4, height());
 }
 
 void StartScreenWidget::resizeEvent(QResizeEvent* event) {

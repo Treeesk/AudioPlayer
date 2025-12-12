@@ -4,6 +4,7 @@
 #include "DataManager.h"
 #include "TrackInfoUI.h"
 #include "VolumeSlider.h"
+#include "ScrollBarTracks.h"
 
 class StartScreenWidget: public QWidget {
     Q_OBJECT
@@ -14,6 +15,7 @@ private:
     MusicDataManager* _mdm;
     TrackInfoWidget* trif;
     volumeSlider* vol;
+    TrackInfoScroll* scrollPanel;
     int trif_width;
     int trif_height;
     int vol_width;
