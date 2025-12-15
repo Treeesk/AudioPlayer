@@ -82,6 +82,13 @@ void MusicDataManager::prev() {
     play();
 }
 
+void MusicDataManager::PanelChangeTrack(int index) {
+    launchtrack = false;
+    _currenttrackind = index;
+    emit currenttrackchange(currenttrack());
+    play();
+}
+
 void MusicDataManager::seekingAudio(int value) {
     _isplaying = true;
     launchtrack = true;

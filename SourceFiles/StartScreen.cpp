@@ -54,5 +54,6 @@ void StartScreenWidget::create_connections() {
     connect(trif->time, &TrackTime::setTimeTrack, _mdm, &MusicDataManager::seekingAudio);
     connect(trif->time, &TrackTime::SeekChangeIcon, pcw, &PlayerControlsWidget::ChangeIcon);
     connect(vol, &volumeSlider::newVolume, _mdm, &MusicDataManager::setVolume);
+    connect(scrollPanel, &TrackInfoScroll::SetNewTrackPanel, _mdm, &MusicDataManager::PanelChangeTrack);
 }
 

@@ -2,8 +2,14 @@
 #include <QPainter>
 #include <algorithm>
 
-TrackInfoRepresentation::TrackInfoRepresentation(const track& trk, QWidget* parent)
-    : TrackInfoBase(trk, parent) {
+void TrackInfoRepresentation::mouseReleaseEvent(QMouseEvent* event) {
+    emit setTrackFromPanel(index_of_track);
+    TrackInfoBase::mouseReleaseEvent(event);
+}
+
+TrackInfoRepresentation::TrackInfoRepresentation(const track& trk, int index, QWidget* parent)
+    : TrackInfoBase(trk, parent), _trk(trk) {
+    index_of_track = index;
 }
 
 void TrackInfoRepresentation::paintEvent(QPaintEvent* event) {
@@ -50,7 +56,7 @@ TrackInfoScroll::TrackInfoScroll(const QVector<track>& tracks, QWidget* parent)
     layout = new QVBoxLayout(containerWidget);
     layout->setSpacing(5);
     layout->setAlignment(Qt::AlignTop);
-    layout->setContentsMargins(5, 5, 0, 0);
+    layout->setContentsMargins(5, 5, 0, 5);
     loadTracks(tracks);
 
     // привязываем containerWidget к scrollArea
@@ -59,8 +65,9 @@ TrackInfoScroll::TrackInfoScroll(const QVector<track>& tracks, QWidget* parent)
 }
 
 void TrackInfoScroll::loadTracks(const QVector<track>& tracks) {
-    for (const track& trk : tracks) {
-        TrackInfoRepresentation* item = new TrackInfoRepresentation(trk, containerWidget);
+    for (int i = 0; i < tracks.size(); ++i) {
+        TrackInfoRepresentation* item = new TrackInfoRepresentation(tracks[i], i, containerWidget);
+        connect(item, &TrackInfoRepresentation::setTrackFromPanel, this, &TrackInfoScroll::clicked);
         layout->addWidget(item);
         track_widgets.push_back(item);
     }
@@ -86,4 +93,8 @@ void TrackInfoScroll::resizeEvent(QResizeEvent* event) {
         first = false;
     }
     containerWidget->setFixedSize(set_width, totalHeight);
+}
+
+void TrackInfoScroll::clicked(int index) {
+    emit SetNewTrackPanel(index);
 }

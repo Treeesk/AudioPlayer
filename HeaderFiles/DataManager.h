@@ -23,6 +23,7 @@ public slots:
     void prev();
     void seekingAudio(int value);
     void setVolume(int value);
+    void PanelChangeTrack(int index);
 signals:
     void currenttrackchange(const track& trk);
     void playRequested(const char* path);
