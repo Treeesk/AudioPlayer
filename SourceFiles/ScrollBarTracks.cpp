@@ -1,14 +1,17 @@
 #include "ScrollBarTracks.h"
 #include <QPainter>
+#include <algorithm>
 
-TrackInfoRepresentation::TrackInfoRepresentation(const track& trk, QWidget* parent): TrackInfoBase(trk, parent) {
+TrackInfoRepresentation::TrackInfoRepresentation(const track& trk, QWidget* parent)
+    : TrackInfoBase(trk, parent) {
 }
 
 void TrackInfoRepresentation::paintEvent(QPaintEvent* event) {
     QPainter painter(this);
-    QRect coverRect(0, 0, width() / 2, height());
-    painter.setPen(Qt::black);
     painter.setRenderHint(QPainter::Antialiasing);
+    painter.setPen(Qt::black);
+
+    QRect coverRect(0, 0, width() / 2, height());
     painter.drawPixmap(coverRect, getCover());
 
     QFont font("Times New Roman", 12, QFont::DemiBold);
@@ -23,34 +26,64 @@ void TrackInfoRepresentation::paintEvent(QPaintEvent* event) {
     painter.drawText(artistRect, Qt::AlignLeft | Qt::TextWordWrap | Qt::AlignTop, getArtist());
 }
 
-TrackInfoScroll::TrackInfoScroll(const QVector<track>& tracks, QWidget* parent): QWidget(parent) {
-    layout = new QVBoxLayout(this);
+TrackInfoScroll::TrackInfoScroll(const QVector<track>& tracks, QWidget* parent)
+    : QWidget(parent) {
+
+    mainLayuot = new QVBoxLayout(this);
+    mainLayuot->setContentsMargins(0, 0, 0, 0);
+    mainLayuot->setSpacing(0);
+
+    containerWidget = new QWidget;
+    containerWidget->setStyleSheet("background: transparent;");
+
+    scrollArea = new QScrollArea(this);
+    scrollArea->setFrameShape(QFrame::NoFrame);
+    scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    scrollArea->setStyleSheet(R"(
+        QScrollArea {
+            border: none;
+            background: transparent;
+        }
+    )");
+
+    layout = new QVBoxLayout(containerWidget);
     layout->setSpacing(5);
     layout->setAlignment(Qt::AlignTop);
+    layout->setContentsMargins(5, 5, 0, 0);
     loadTracks(tracks);
-    layout->addStretch();
+
+    // привязываем containerWidget к scrollArea
+    scrollArea->setWidget(containerWidget);
+    mainLayuot->addWidget(scrollArea); // нужно сказать layuout, что он отвечает за геометрию scrollarea(ну или виджета)
 }
 
 void TrackInfoScroll::loadTracks(const QVector<track>& tracks) {
-    for (const track& trk: tracks) {
-        TrackInfoRepresentation* item = new TrackInfoRepresentation(trk, this);
+    for (const track& trk : tracks) {
+        TrackInfoRepresentation* item = new TrackInfoRepresentation(trk, containerWidget);
         layout->addWidget(item);
         track_widgets.push_back(item);
     }
 }
 
 void TrackInfoScroll::resizeEvent(QResizeEvent* event) {
+    QWidget::resizeEvent(event);
     int min_width = 100;
     int max_width = 225;
     int set_width = width();
-    if (set_width < min_width) {
-        set_width = min_width;
-    }
-    else if (set_width > max_width) {
-        set_width = max_width;
-    }
-    QWidget::resizeEvent(event);
-    for (auto* widget: track_widgets) {
+    set_width = std::clamp(set_width, min_width, max_width);
+
+    const int spacing = layout->spacing();
+    QMargins m = layout->contentsMargins();
+
+    int totalHeight = m.top() + m.bottom();
+    bool first = true;
+    for (auto* widget : track_widgets) {
         widget->setFixedSize(set_width, set_width / 2);
+        if (!first)
+            totalHeight += spacing;
+        totalHeight += widget->height();
+        first = false;
     }
+    containerWidget->setFixedSize(set_width, totalHeight);
 }

@@ -33,7 +33,7 @@ void StartScreenWidget::UpdateScreenPos() {
     trif->setGeometry(centerX, startY, trif_width, trif_height);
     pcw->setGeometry(pcwCenterX, pcwY, pcw->WidthPCW(), pcwHeight);
     vol->setGeometry(centerX, volY, vol_width, vol_height);
-      //qDebug() << width() / 4 << ' ' << height() << '\n';
+
     scrollPanel->setGeometry(0, 0, width() / 4, height());
 }
 
