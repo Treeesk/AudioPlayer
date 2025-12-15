@@ -55,5 +55,6 @@ void StartScreenWidget::create_connections() {
     connect(trif->time, &TrackTime::SeekChangeIcon, pcw, &PlayerControlsWidget::ChangeIcon);
     connect(vol, &volumeSlider::newVolume, _mdm, &MusicDataManager::setVolume);
     connect(scrollPanel, &TrackInfoScroll::SetNewTrackPanel, _mdm, &MusicDataManager::PanelChangeTrack);
+    connect(scrollPanel, &TrackInfoScroll::SetNewTrackPanel, pcw, &PlayerControlsWidget::ChangeIcon); // смена иконки с паузы на проигрывание(если она стояла)
 }
 
