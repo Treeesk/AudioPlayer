@@ -8,7 +8,6 @@
 class TrackInfoRepresentation: public TrackInfoBase {
     Q_OBJECT
 private:
-    track _trk;
     int index_of_track;
 public:
     TrackInfoRepresentation(const track& trk, int index, QWidget* parent = nullptr);

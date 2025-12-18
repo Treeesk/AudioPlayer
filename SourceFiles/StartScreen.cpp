@@ -43,18 +43,21 @@ void StartScreenWidget::resizeEvent(QResizeEvent* event) {
 }
 
 void StartScreenWidget::create_connections() {
-    connect(pcw, &PlayerControlsWidget::onPlayclicked, _mdm, &MusicDataManager::play);
-    connect(pcw, &PlayerControlsWidget::onPauseclicked, _mdm, &MusicDataManager::pause);
-    connect(pcw, &PlayerControlsWidget::onNextclicked, _mdm, &MusicDataManager::next);
-    connect(pcw, &PlayerControlsWidget::onPrevclicked, _mdm, &MusicDataManager::prev);
-    connect(_mdm, &MusicDataManager::currenttrackchange, trif, &TrackInfoWidget::setTrack);
-    connect(pcw, &PlayerControlsWidget::onPlayclicked, trif->time, &TrackTime::start);
-    connect(pcw, &PlayerControlsWidget::onPauseclicked, trif->time, &TrackTime::pause);
-    connect(trif->time, &TrackTime::endtrack, _mdm, &MusicDataManager::next);
-    connect(trif->time, &TrackTime::setTimeTrack, _mdm, &MusicDataManager::seekingAudio);
-    connect(trif->time, &TrackTime::SeekChangeIcon, pcw, &PlayerControlsWidget::ChangeIcon);
-    connect(vol, &volumeSlider::newVolume, _mdm, &MusicDataManager::setVolume);
-    connect(scrollPanel, &TrackInfoScroll::SetNewTrackPanel, _mdm, &MusicDataManager::PanelChangeTrack);
+    connect(pcw, &PlayerControlsWidget::onPlayclicked, _mdm, &MusicDataManager::play); // Запуск/возобновление проигрывания трека
+    connect(pcw, &PlayerControlsWidget::onPauseclicked, _mdm, &MusicDataManager::pause); // Пауза
+    connect(pcw, &PlayerControlsWidget::onNextclicked, _mdm, &MusicDataManager::next); // Переключение на следующий трек
+    connect(pcw, &PlayerControlsWidget::onPrevclicked, _mdm, &MusicDataManager::prev); // Переключение на предыдущий трек
+    connect(pcw, &PlayerControlsWidget::onPlayclicked, trif->time, &TrackTime::start); // По нажатию на кнопку Запуск/возобновление, начинает идти таймер
+    connect(pcw, &PlayerControlsWidget::onPauseclicked, trif->time, &TrackTime::pause); //  По нажатию на кнопку Пауза, начинает идти таймер
+
+    connect(_mdm, &MusicDataManager::currenttrackchange, trif, &TrackInfoWidget::setTrack); // При смене трека, меняется внешнее представление на актуальный трек
+
+    connect(trif->time, &TrackTime::endtrack, _mdm, &MusicDataManager::next); // Если трек заканчивается(проигран) переключается на следующий
+    connect(trif->time, &TrackTime::setTimeTrack, _mdm, &MusicDataManager::seekingAudio); // При перемотке трека в UI, перематывается трек внутри движка
+    connect(trif->time, &TrackTime::SeekChangeIcon, pcw, &PlayerControlsWidget::ChangeIcon); // Смена иконки, если пользователь перемотал и у него была иконка паузы(смена на иконку проигрывания трека)
+
+    connect(vol, &volumeSlider::newVolume, _mdm, &MusicDataManager::setVolume); // Изменения громкости музыки
+
+    connect(scrollPanel, &TrackInfoScroll::SetNewTrackPanel, _mdm, &MusicDataManager::PanelChangeTrack); // При переключении трека на панели слева, перерисовка основного вида трека
     connect(scrollPanel, &TrackInfoScroll::SetNewTrackPanel, pcw, &PlayerControlsWidget::ChangeIcon); // смена иконки с паузы на проигрывание(если она стояла)
 }
-

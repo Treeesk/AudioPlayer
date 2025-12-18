@@ -1,14 +1,17 @@
 #include "ScrollBarTracks.h"
 #include <QPainter>
 #include <algorithm>
+#include <QMouseEvent>
 
 void TrackInfoRepresentation::mouseReleaseEvent(QMouseEvent* event) {
-    emit setTrackFromPanel(index_of_track);
+    if (event->button() == Qt::LeftButton) {
+        emit setTrackFromPanel(index_of_track);
+    }
     TrackInfoBase::mouseReleaseEvent(event);
 }
 
 TrackInfoRepresentation::TrackInfoRepresentation(const track& trk, int index, QWidget* parent)
-    : TrackInfoBase(trk, parent), _trk(trk) {
+    : TrackInfoBase(trk, parent) {
     index_of_track = index;
 }
 
