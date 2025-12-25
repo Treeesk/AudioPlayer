@@ -10,15 +10,25 @@ void TrackInfoRepresentation::mouseReleaseEvent(QMouseEvent* event) {
     TrackInfoBase::mouseReleaseEvent(event);
 }
 
-TrackInfoRepresentation::TrackInfoRepresentation(const track& trk, int index, QWidget* parent)
+void TrackInfoRepresentation::setSelected(bool flag) {
+    selectedTrack = flag;
+    update();
+}
+
+TrackInfoRepresentation::TrackInfoRepresentation(const track& trk, int index, bool flag, QWidget* parent)
     : TrackInfoBase(trk, parent) {
     index_of_track = index;
+    selectedTrack = flag;
 }
 
 void TrackInfoRepresentation::paintEvent(QPaintEvent* event) {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
     painter.setPen(Qt::black);
+
+    if (selectedTrack) {
+        painter.fillRect(rect(), QColor(192, 192, 192));
+    }
 
     QRect coverRect(0, 0, width() / 2, height());
     painter.drawPixmap(coverRect, getCover());
@@ -68,8 +78,13 @@ TrackInfoScroll::TrackInfoScroll(const QVector<track>& tracks, QWidget* parent)
 }
 
 void TrackInfoScroll::loadTracks(const QVector<track>& tracks) {
-    for (int i = 0; i < tracks.size(); ++i) {
-        TrackInfoRepresentation* item = new TrackInfoRepresentation(tracks[i], i, containerWidget);
+    TrackInfoRepresentation* item = new TrackInfoRepresentation(tracks[0], 0, true, containerWidget);
+    current = item;
+    connect(item, &TrackInfoRepresentation::setTrackFromPanel, this, &TrackInfoScroll::clicked);
+    layout->addWidget(item);
+    track_widgets.push_back(item);
+    for (int i = 1; i < tracks.size(); ++i) {
+        TrackInfoRepresentation* item = new TrackInfoRepresentation(tracks[i], i, false, containerWidget);
         connect(item, &TrackInfoRepresentation::setTrackFromPanel, this, &TrackInfoScroll::clicked);
         layout->addWidget(item);
         track_widgets.push_back(item);
@@ -99,5 +114,10 @@ void TrackInfoScroll::resizeEvent(QResizeEvent* event) {
 }
 
 void TrackInfoScroll::clicked(int index) {
+    if (current != track_widgets[index]) {
+        current->setSelected(false);
+        current = track_widgets[index];
+        current->setSelected(true);
+    }
     emit SetNewTrackPanel(index);
 }

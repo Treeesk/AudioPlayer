@@ -9,8 +9,10 @@ class TrackInfoRepresentation: public TrackInfoBase {
     Q_OBJECT
 private:
     int index_of_track;
+    bool selectedTrack; // флаг актуального трека
 public:
-    TrackInfoRepresentation(const track& trk, int index, QWidget* parent = nullptr);
+    TrackInfoRepresentation(const track& trk, int index, bool flag = false, QWidget* parent = nullptr);
+    void setSelected(bool flag);
 protected:
     void paintEvent(QPaintEvent* event) override;
     void mouseReleaseEvent(QMouseEvent* event) override;
@@ -26,6 +28,7 @@ private:
     QScrollArea* scrollArea;
     QWidget* containerWidget;
     QVBoxLayout* mainLayuot;
+    TrackInfoRepresentation* current;
 public:
     TrackInfoScroll(const QVector<track>& tracks, QWidget* parent = nullptr);
     void loadTracks(const QVector<track>& tracks);
