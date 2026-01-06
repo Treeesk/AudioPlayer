@@ -15,6 +15,8 @@ StartScreenWidget::StartScreenWidget(MusicDataManager* mdm, QWidget* parent): QW
 
     scrollPanel = new TrackInfoScroll(_mdm->alltracks(), this);
 
+    Directory = new OpenDirectoryButton(this);
+
     create_connections();
     UpdateScreenPos();
 }
@@ -33,8 +35,8 @@ void StartScreenWidget::UpdateScreenPos() {
     trif->setGeometry(centerX, startY, trif_width, trif_height);
     pcw->setGeometry(pcwCenterX, pcwY, pcw->WidthPCW(), pcwHeight);
     vol->setGeometry(centerX, volY, vol_width, vol_height);
-
     scrollPanel->setGeometry(0, 0, width() / 4, height());
+    Directory->setGeometry(width() - 30, height() - 30, 30, 30);
 }
 
 void StartScreenWidget::resizeEvent(QResizeEvent* event) {
@@ -60,4 +62,7 @@ void StartScreenWidget::create_connections() {
 
     connect(scrollPanel, &TrackInfoScroll::SetNewTrackPanel, _mdm, &MusicDataManager::PanelChangeTrack); // При переключении трека на панели слева, перерисовка основного вида трека
     connect(scrollPanel, &TrackInfoScroll::SetNewTrackPanel, pcw, &PlayerControlsWidget::ChangeIcon); // смена иконки с паузы на проигрывание(если она стояла)
+
+    // добавить connect Класса кнопки к manager обновлению папки
+    connect(Directory, &OpenDirectoryButton::dirFound, _mdm, &MusicDataManager::loadfromdata);
 }

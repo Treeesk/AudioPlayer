@@ -5,6 +5,7 @@
 #include "TrackInfoUI.h"
 #include "VolumeSlider.h"
 #include "ScrollBarTracks.h"
+#include "OpenDirectory.h"
 
 class StartScreenWidget: public QWidget {
     Q_OBJECT
@@ -16,6 +17,7 @@ private:
     TrackInfoWidget* trif;
     volumeSlider* vol;
     TrackInfoScroll* scrollPanel;
+    OpenDirectoryButton* Directory; // кнопка открытия файлового окна для выбора папки откуда будет проигрываться музыка
     int trif_width;
     int trif_height;
     int vol_width;
