@@ -29,13 +29,14 @@ private:
     QWidget* containerWidget;
     QVBoxLayout* mainLayuot;
     TrackInfoRepresentation* current;
+    void clear_tracks();
 public:
-    TrackInfoScroll(const QVector<track>& tracks, QWidget* parent = nullptr);
-    void loadTracks(const QVector<track>& tracks);
+    TrackInfoScroll(QWidget* parent = nullptr);
 protected:
-    void resizeEvent(QResizeEvent* event);
+    void paintEvent(QPaintEvent* event);
 public slots:
     void clicked(int ind);
+    void loadTracks(const QVector<track>& tracks);
 signals:
     void SetNewTrackPanel(int ind);
 };

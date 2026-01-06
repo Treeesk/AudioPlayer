@@ -16,7 +16,8 @@ void TrackInfoRepresentation::setSelected(bool flag) {
 }
 
 TrackInfoRepresentation::TrackInfoRepresentation(const track& trk, int index, bool flag, QWidget* parent)
-    : TrackInfoBase(trk, parent) {
+    : TrackInfoBase(parent) {
+    changeTrack(trk);
     index_of_track = index;
     selectedTrack = flag;
 }
@@ -45,7 +46,7 @@ void TrackInfoRepresentation::paintEvent(QPaintEvent* event) {
     painter.drawText(artistRect, Qt::AlignLeft | Qt::TextWordWrap | Qt::AlignTop, getArtist());
 }
 
-TrackInfoScroll::TrackInfoScroll(const QVector<track>& tracks, QWidget* parent)
+TrackInfoScroll::TrackInfoScroll(QWidget* parent)
     : QWidget(parent) {
 
     mainLayuot = new QVBoxLayout(this);
@@ -70,7 +71,6 @@ TrackInfoScroll::TrackInfoScroll(const QVector<track>& tracks, QWidget* parent)
     layout->setSpacing(5);
     layout->setAlignment(Qt::AlignTop);
     layout->setContentsMargins(5, 5, 0, 5);
-    loadTracks(tracks);
 
     // привязываем containerWidget к scrollArea
     scrollArea->setWidget(containerWidget);
@@ -78,6 +78,7 @@ TrackInfoScroll::TrackInfoScroll(const QVector<track>& tracks, QWidget* parent)
 }
 
 void TrackInfoScroll::loadTracks(const QVector<track>& tracks) {
+    clear_tracks();
     TrackInfoRepresentation* item = new TrackInfoRepresentation(tracks[0], 0, true, containerWidget);
     current = item;
     connect(item, &TrackInfoRepresentation::setTrackFromPanel, this, &TrackInfoScroll::clicked);
@@ -89,10 +90,21 @@ void TrackInfoScroll::loadTracks(const QVector<track>& tracks) {
         layout->addWidget(item);
         track_widgets.push_back(item);
     }
+    update();
 }
 
-void TrackInfoScroll::resizeEvent(QResizeEvent* event) {
-    QWidget::resizeEvent(event);
+void TrackInfoScroll::clear_tracks() {
+    if (!track_widgets.empty()) {
+        for (auto& widget: track_widgets) {
+            layout->removeWidget(widget);
+            widget->deleteLater();
+        }
+        track_widgets.clear();
+        current = nullptr;
+    }
+}
+
+void TrackInfoScroll::paintEvent(QPaintEvent* event) {
     int min_width = 100;
     int max_width = 225;
     int set_width = width();
@@ -102,13 +114,15 @@ void TrackInfoScroll::resizeEvent(QResizeEvent* event) {
     QMargins m = layout->contentsMargins();
 
     int totalHeight = m.top() + m.bottom();
-    bool first = true;
-    for (auto* widget : track_widgets) {
-        widget->setFixedSize(set_width, set_width / 2);
-        if (!first)
-            totalHeight += spacing;
-        totalHeight += widget->height();
-        first = false;
+    if (!track_widgets.empty()) {
+        bool first = true;
+        for (auto* widget : track_widgets) {
+            widget->setFixedSize(set_width, set_width / 2);
+            if (!first)
+                totalHeight += spacing;
+            totalHeight += widget->height();
+            first = false;
+        }
     }
     containerWidget->setFixedSize(set_width, totalHeight);
 }

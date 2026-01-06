@@ -31,6 +31,8 @@ signals:
     void pauseRequested();
     void seekRequested(int value, const char* path);
     void NewVolRequested(int value);
+    void setTrackfromDir(const track& trk);
+    void setTracksfromDir(const QVector<track>& trks);
 private:
     QVector<track> tracks;
     int _currenttrackind = -1;

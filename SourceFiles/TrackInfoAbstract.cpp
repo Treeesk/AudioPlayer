@@ -1,10 +1,10 @@
 #include "TrackInfoAbstract.h"
 
-TrackInfoBase::TrackInfoBase(const track& trk, QWidget* parent): QWidget(parent) {
-    changeTrack(trk);
+TrackInfoBase::TrackInfoBase(QWidget* parent): QWidget(parent) {
 }
 
 void TrackInfoBase::changeTrack(const track& trk) {
+    _track = trk;
     pixmapcover = QPixmap::fromImage(trk.cover);
     artist = trk._artist;
     title = trk._title;
@@ -12,17 +12,21 @@ void TrackInfoBase::changeTrack(const track& trk) {
 }
 
 QPixmap TrackInfoBase::getCover() {
-    return pixmapcover;
+    return hasTrack() ? pixmapcover : QPixmap();
 }
 
 QString TrackInfoBase::getArtist() {
-    return artist;
+    return hasTrack() ? artist : QString();
 }
 
 QString TrackInfoBase::getTitle() {
-    return title;
+    return hasTrack() ? title : QString();
 }
 
 int TrackInfoBase::getDuration() {
-    return durationTrack;
+    return hasTrack() ? durationTrack : 0;
+}
+
+bool TrackInfoBase::hasTrack() {
+    return _track.has_value();
 }

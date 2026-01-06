@@ -7,13 +7,13 @@ StartScreenWidget::StartScreenWidget(MusicDataManager* mdm, QWidget* parent): QW
 
     trif_height = 270;
     trif_width = 200;
-    trif = new TrackInfoWidget(_mdm->currenttrack(), trif_width, trif_height, this);
+    trif = new TrackInfoWidget(trif_width, trif_height, this);
 
     vol_width = 200;
     vol_height = 20;
     vol = new volumeSlider(vol_width, vol_height, this);
 
-    scrollPanel = new TrackInfoScroll(_mdm->alltracks(), this);
+    scrollPanel = new TrackInfoScroll(this);
 
     Directory = new OpenDirectoryButton(this);
 
@@ -53,6 +53,8 @@ void StartScreenWidget::create_connections() {
     connect(pcw, &PlayerControlsWidget::onPauseclicked, trif->time, &TrackTime::pause); //  По нажатию на кнопку Пауза, начинает идти таймер
 
     connect(_mdm, &MusicDataManager::currenttrackchange, trif, &TrackInfoWidget::setTrack); // При смене трека, меняется внешнее представление на актуальный трек
+    connect(_mdm, &MusicDataManager::setTrackfromDir, trif, &TrackInfoWidget::setTrack); // установка трека при открытии папки с музыкой
+    connect(_mdm, &MusicDataManager::setTracksfromDir, scrollPanel, &TrackInfoScroll::loadTracks); // установка треков после открытии папки с музыкой
 
     connect(trif->time, &TrackTime::endtrack, _mdm, &MusicDataManager::next); // Если трек заканчивается(проигран) переключается на следующий
     connect(trif->time, &TrackTime::setTimeTrack, _mdm, &MusicDataManager::seekingAudio); // При перемотке трека в UI, перематывается трек внутри движка
