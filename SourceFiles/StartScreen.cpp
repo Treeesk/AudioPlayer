@@ -60,6 +60,7 @@ void StartScreenWidget::create_connections() {
     connect(_mdm, &MusicDataManager::setTrackfromDir, trif, &TrackInfoWidget::initTrack); // установка трека при открытии папки с музыкой
     connect(_mdm, &MusicDataManager::setTracksfromDir, scrollPanel, &TrackInfoScroll::loadTracks); // установка треков после открытии папки с музыкой
     connect(_mdm, &MusicDataManager::tracksLoaded, this, &StartScreenWidget::showWidgets); // При инициализации треков из папки виджеты на экране должны отобразиться
+    connect(_mdm, &MusicDataManager::currentTrackIndexChanged, scrollPanel, &TrackInfoScroll::clicked); // передача индекса акутального трека
 
     connect(trif->time, &TrackTime::endtrack, _mdm, &MusicDataManager::next); // Если трек заканчивается(проигран) переключается на следующий
     connect(trif->time, &TrackTime::setTimeTrack, _mdm, &MusicDataManager::seekingAudio); // При перемотке трека в UI, перематывается трек внутри движка
@@ -70,8 +71,7 @@ void StartScreenWidget::create_connections() {
     connect(scrollPanel, &TrackInfoScroll::SetNewTrackPanel, _mdm, &MusicDataManager::PanelChangeTrack); // При переключении трека на панели слева, перерисовка основного вида трека
     connect(scrollPanel, &TrackInfoScroll::SetNewTrackPanel, pcw, &PlayerControlsWidget::ChangeIcon); // смена иконки с паузы на проигрывание(если она стояла)
 
-    // добавить connect Класса кнопки к manager обновлению папки
-    connect(Directory, &OpenDirectoryButton::dirFound, _mdm, &MusicDataManager::loadfromdata);
+    connect(Directory, &OpenDirectoryButton::dirFound, _mdm, &MusicDataManager::loadfromdata); // открытие папки по кнопке и вызов загрузки треков
 }
 
 void StartScreenWidget::showWidgets() {

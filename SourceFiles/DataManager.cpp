@@ -72,6 +72,7 @@ void MusicDataManager::next() {
         _currenttrackind++;
     }
     emit currenttrackchange(currenttrack());
+    emit currentTrackIndexChanged(_currenttrackind);
     play();
 }
 
@@ -84,6 +85,7 @@ void MusicDataManager::prev() {
         _currenttrackind--;
     }
     emit currenttrackchange(currenttrack());
+    emit currentTrackIndexChanged(_currenttrackind);
     play();
 }
 
