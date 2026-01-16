@@ -12,7 +12,6 @@ class MusicDataManager: public QObject {
 public:
     MusicDataManager(QObject* parent = nullptr);
     ~MusicDataManager();
-    void loadfromdata(const char* path_to_dir);
     const track& currenttrack();
     const QVector<track>& alltracks();
 
@@ -24,6 +23,7 @@ public slots:
     void seekingAudio(int value);
     void setVolume(int value);
     void PanelChangeTrack(int index);
+    void loadfromdata(const char* path_to_dir);
 signals:
     void currenttrackchange(const track& trk);
     void playRequested(const char* path);
@@ -33,6 +33,7 @@ signals:
     void NewVolRequested(int value);
     void setTrackfromDir(const track& trk);
     void setTracksfromDir(const QVector<track>& trks);
+    void tracksLoaded();
 private:
     QVector<track> tracks;
     int _currenttrackind = -1;

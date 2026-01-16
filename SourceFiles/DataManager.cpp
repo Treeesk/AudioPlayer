@@ -32,8 +32,11 @@ void MusicDataManager::loadfromdata(const char* path_to_dir) {
         }
         paths_to_files.pop_front();
     }
-    emit setTrackfromDir(currenttrack());
-    emit setTracksfromDir(alltracks());
+    if (!tracks.empty()) {
+        emit setTrackfromDir(currenttrack());
+        emit setTracksfromDir(alltracks());
+        emit tracksLoaded();
+    }
 }
 
 const track& MusicDataManager::currenttrack() {

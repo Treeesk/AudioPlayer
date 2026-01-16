@@ -26,6 +26,8 @@ private:
     void create_connections();
 protected:
     void resizeEvent(QResizeEvent* event);
+public slots:
+    void showWidgets();
 };
 
 #endif // STARTSCREEN_H

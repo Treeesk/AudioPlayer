@@ -4,16 +4,20 @@
 StartScreenWidget::StartScreenWidget(MusicDataManager* mdm, QWidget* parent): QWidget(parent) {
     _mdm = mdm;
     pcw = new PlayerControlsWidget(this);
+    pcw->hide();
 
     trif_height = 270;
     trif_width = 200;
     trif = new TrackInfoWidget(trif_width, trif_height, this);
+    trif->hide();
 
     vol_width = 200;
     vol_height = 20;
     vol = new volumeSlider(vol_width, vol_height, this);
+    vol->hide();
 
     scrollPanel = new TrackInfoScroll(this);
+    scrollPanel->hide();
 
     Directory = new OpenDirectoryButton(this);
 
@@ -55,6 +59,7 @@ void StartScreenWidget::create_connections() {
     connect(_mdm, &MusicDataManager::currenttrackchange, trif, &TrackInfoWidget::setTrack); // При смене трека, меняется внешнее представление на актуальный трек
     connect(_mdm, &MusicDataManager::setTrackfromDir, trif, &TrackInfoWidget::initTrack); // установка трека при открытии папки с музыкой
     connect(_mdm, &MusicDataManager::setTracksfromDir, scrollPanel, &TrackInfoScroll::loadTracks); // установка треков после открытии папки с музыкой
+    connect(_mdm, &MusicDataManager::tracksLoaded, this, &StartScreenWidget::showWidgets); // При инициализации треков из папки виджеты на экране должны отобразиться
 
     connect(trif->time, &TrackTime::endtrack, _mdm, &MusicDataManager::next); // Если трек заканчивается(проигран) переключается на следующий
     connect(trif->time, &TrackTime::setTimeTrack, _mdm, &MusicDataManager::seekingAudio); // При перемотке трека в UI, перематывается трек внутри движка
@@ -67,4 +72,11 @@ void StartScreenWidget::create_connections() {
 
     // добавить connect Класса кнопки к manager обновлению папки
     connect(Directory, &OpenDirectoryButton::dirFound, _mdm, &MusicDataManager::loadfromdata);
+}
+
+void StartScreenWidget::showWidgets() {
+    pcw->show();
+    trif->show();
+    vol->show();
+    scrollPanel->show();
 }
