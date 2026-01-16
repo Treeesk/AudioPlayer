@@ -6,11 +6,12 @@
 MusicDataManager::MusicDataManager(QObject* parent): QObject(parent) {
     worker = new AudioWorker();
     worker->moveToThread(&audioThread);
-    connect(this, &MusicDataManager::playRequested, worker, &AudioWorker::playTrack);
-    connect(this, &MusicDataManager::resumeRequested, worker, &AudioWorker::ResumeTrack);
-    connect(this, &MusicDataManager::pauseRequested, worker, &AudioWorker::pauseTrack);
-    connect(this, &MusicDataManager::seekRequested, worker, &AudioWorker::seekAudio);
-    connect(this, &MusicDataManager::NewVolRequested, worker, &AudioWorker::newVolume);
+    connect(this, &MusicDataManager::playRequested, worker, &AudioWorker::playTrack, Qt::QueuedConnection);
+    connect(this, &MusicDataManager::resumeRequested, worker, &AudioWorker::ResumeTrack, Qt::QueuedConnection);
+    connect(this, &MusicDataManager::pauseRequested, worker, &AudioWorker::pauseTrack, Qt::QueuedConnection);
+    connect(this, &MusicDataManager::seekRequested, worker, &AudioWorker::seekAudio, Qt::QueuedConnection);
+    connect(this, &MusicDataManager::NewVolRequested, worker, &AudioWorker::newVolume, Qt::QueuedConnection);
+    connect(this, &MusicDataManager::resetEngine, worker, &AudioWorker::ResetEngine, Qt::QueuedConnection); // для перезагрузки движка, чтобы остановить прошлое воспроизведение
     audioThread.start();
 }
 
@@ -20,6 +21,11 @@ MusicDataManager::~MusicDataManager() {
 }
 
 void MusicDataManager::loadfromdata(const char* path_to_dir) {
+    emit resetEngine();
+    emit resetPCW();
+    tracks.clear();
+    _isplaying = false;
+    launchtrack = false;
     std::deque<std::filesystem::path> paths_to_files = GetAudioFiles(path_to_dir);
     tracks.reserve(paths_to_files.size());
     _currenttrackind = paths_to_files.size() != 0 ? 0 : -1;

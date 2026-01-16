@@ -80,7 +80,16 @@ void PlayerControlsWidget::ChangeIcon() {
     if (!PlayStopTrack->isChecked()) { // проверяем состояние кнопки
         PlayStopTrack->blockSignals(true); // выключили сигналы от PlayStopTrack
         PlayStopTrack->setChecked(true);
-        PlayStopTrack->setIcon(stopIcon);
+        PlayStopTrack->setIcon(stopIcon); // показывает кнопку остановки(трек проигрывается)
+        PlayStopTrack->blockSignals(false);
+    }
+}
+
+void PlayerControlsWidget::ResetIcon() {
+    if (PlayStopTrack->isChecked()) { // проверяем состояние кнопки
+        PlayStopTrack->blockSignals(true); // выключили сигналы от PlayStopTrack
+        PlayStopTrack->setChecked(false);
+        PlayStopTrack->setIcon(playIcon); // показывает кнопку старта(трек на паузе)
         PlayStopTrack->blockSignals(false);
     }
 }

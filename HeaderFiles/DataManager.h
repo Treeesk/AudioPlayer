@@ -35,6 +35,8 @@ signals:
     void setTracksfromDir(const QVector<track>& trks);
     void tracksLoaded();
     void currentTrackIndexChanged(int ind);
+    void resetEngine();
+    void resetPCW();
 private:
     QVector<track> tracks;
     int _currenttrackind = -1;

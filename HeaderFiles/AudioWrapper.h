@@ -14,6 +14,7 @@ public slots:
     void ResumeTrack();
     void pauseTrack();
     void newVolume(int value);
+    void ResetEngine();
 private:
     Player* player;
 };

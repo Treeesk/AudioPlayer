@@ -20,3 +20,7 @@ void AudioWorker::playTrack(const char* path) {
 void AudioWorker::newVolume(int value) {
     player->changeVol(value);
 }
+
+void AudioWorker::ResetEngine() {
+    player->ResetPlay();
+}

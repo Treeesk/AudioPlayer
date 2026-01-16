@@ -38,5 +38,6 @@ public slots:
     void NextTrackclick();
     void PrevTrackclick();
     void ChangeIcon();
+    void ResetIcon();
 };
 #endif // DESCRIPTIONBUTTON_H

@@ -159,6 +159,7 @@ void TrackTime::setnewTime(int value) {
 void TrackTime::settime(const int& duration) {
     totaltime = duration;
     launch = false;
+    timer->stop();
     slider->setRange(0, totaltime * 2);
     slider->setValue(0);
     slider->show();
@@ -169,6 +170,8 @@ void TrackTime::settime(const int& duration) {
 void TrackTime::initTime(const int& duration) {
     totaltime = duration;
     launch = false;
+    currenttime = 0;
+    timer->stop();
     slider->setRange(0, totaltime * 2);
     slider->setValue(0);
     slider->show();
