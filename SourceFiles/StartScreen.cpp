@@ -53,7 +53,7 @@ void StartScreenWidget::create_connections() {
     connect(pcw, &PlayerControlsWidget::onPauseclicked, trif->time, &TrackTime::pause); //  По нажатию на кнопку Пауза, начинает идти таймер
 
     connect(_mdm, &MusicDataManager::currenttrackchange, trif, &TrackInfoWidget::setTrack); // При смене трека, меняется внешнее представление на актуальный трек
-    connect(_mdm, &MusicDataManager::setTrackfromDir, trif, &TrackInfoBase::changeTrack); // установка трека при открытии папки с музыкой
+    connect(_mdm, &MusicDataManager::setTrackfromDir, trif, &TrackInfoWidget::initTrack); // установка трека при открытии папки с музыкой
     connect(_mdm, &MusicDataManager::setTracksfromDir, scrollPanel, &TrackInfoScroll::loadTracks); // установка треков после открытии папки с музыкой
 
     connect(trif->time, &TrackTime::endtrack, _mdm, &MusicDataManager::next); // Если трек заканчивается(проигран) переключается на следующий

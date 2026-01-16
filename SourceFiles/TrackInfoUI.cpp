@@ -7,7 +7,7 @@
 
 TrackInfoWidget::TrackInfoWidget(const int& _width, const int& _height, QWidget *parent): TrackInfoBase(parent) {
     setFixedSize(_width, _height);
-    time = new TrackTime(getDuration(), sizecover, 15, this);
+    time = new TrackTime(sizecover, 15, this);
     time->setGeometry(0, sizecover + 5, sizecover, 15);
 }
 
@@ -38,9 +38,15 @@ void TrackInfoWidget::setTrack(const track& trk) {
     update();
 }
 
-TrackTime::TrackTime(const int& duration, const int& width, const int& height, QWidget* parent): QWidget(parent){
+void TrackInfoWidget::initTrack(const track& trk) {
+    changeTrack(trk);
+    time->initTime(getDuration());
+    update();
+}
+
+
+TrackTime::TrackTime(const int& width, const int& height, QWidget* parent): QWidget(parent){
     setFixedSize(width, height);
-    totaltime = duration;
     currenttime = 0;
     slider = new QSlider(Qt::Horizontal, this);
     slider->setRange(0, totaltime * 2);
@@ -84,6 +90,7 @@ TrackTime::TrackTime(const int& duration, const int& width, const int& height, Q
             margin: -3px 0;
         }
     )");
+    slider->hide(); // скрыть пока трек не инициализирован
 
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &TrackTime::changetime);
@@ -154,7 +161,17 @@ void TrackTime::settime(const int& duration) {
     launch = false;
     slider->setRange(0, totaltime * 2);
     slider->setValue(0);
+    slider->show();
     start();
+    update();
+}
+
+void TrackTime::initTime(const int& duration) {
+    totaltime = duration;
+    launch = false;
+    slider->setRange(0, totaltime * 2);
+    slider->setValue(0);
+    slider->show();
     update();
 }
 

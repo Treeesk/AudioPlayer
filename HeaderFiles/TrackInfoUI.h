@@ -16,8 +16,9 @@ private:
     bool flag_for_slider_geo = false;
     bool seeking = false;
 public:
-    TrackTime(const int& duration, const int& width, const int& height, QWidget *parent = nullptr);
+    TrackTime(const int& width, const int& height, QWidget *parent = nullptr);
     void settime(const int& duration);
+    void initTime(const int& duration);
 protected:
     void paintEvent(QPaintEvent* event);
 public slots:
@@ -42,5 +43,6 @@ protected:
     void paintEvent(QPaintEvent* event) override;
 public slots:
     void setTrack(const track& trk);
+    void initTrack(const track& trk);
 };
 #endif // TRACKINFOUI_H
