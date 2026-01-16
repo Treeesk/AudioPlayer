@@ -111,7 +111,7 @@ void TrackTime::paintEvent(QPaintEvent* event) {
     }
     QFontMetrics fm = painter.fontMetrics();
     int heightFont = fm.height(); // высота текста которая может быть при этом размере шрифта
-    int widthtotalTime = painter.fontMetrics().horizontalAdvance(time_of_track); // fontMetrics возвращает объект содержащий в пикселях размер шрифта, horizontalAdvance подсчитывает сколько в пикселях текст будет
+    int widthtotalTime = fm.horizontalAdvance(time_of_track); // fontMetrics возвращает объект содержащий в пикселях размер шрифта, horizontalAdvance подсчитывает сколько в пикселях текст будет
     QRect timeRect(width() - widthtotalTime, (height() - heightFont) / 2, widthtotalTime, heightFont);
     painter.drawText(timeRect, Qt::AlignLeft | Qt::AlignVCenter, time_of_track);
 

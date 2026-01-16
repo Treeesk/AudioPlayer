@@ -40,7 +40,7 @@ void StartScreenWidget::UpdateScreenPos() {
     pcw->setGeometry(pcwCenterX, pcwY, pcw->WidthPCW(), pcwHeight);
     vol->setGeometry(centerX, volY, vol_width, vol_height);
     scrollPanel->setGeometry(0, 0, width() / 4, height());
-    Directory->setGeometry(width() - 30, height() - 30, 30, 30);
+    Directory->setGeometry(width() - 80, 10, 70, 35);
 }
 
 void StartScreenWidget::resizeEvent(QResizeEvent* event) {
