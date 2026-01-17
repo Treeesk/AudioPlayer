@@ -8,7 +8,7 @@ StartScreenWidget::StartScreenWidget(MusicDataManager* mdm, QWidget* parent): QW
 
     trif_height = 270;
     trif_width = 200;
-    trif = new TrackInfoWidget(trif_width, trif_height, this);
+    trif = new TrackInfoWidget(this);
     trif->hide();
 
     vol_width = 200;
@@ -22,7 +22,6 @@ StartScreenWidget::StartScreenWidget(MusicDataManager* mdm, QWidget* parent): QW
     Directory = new OpenDirectoryButton(this);
 
     create_connections();
-    UpdateScreenPos();
 }
 
 void StartScreenWidget::UpdateScreenPos() {
@@ -44,8 +43,8 @@ void StartScreenWidget::UpdateScreenPos() {
 }
 
 void StartScreenWidget::resizeEvent(QResizeEvent* event) {
-    UpdateScreenPos();
     QWidget::resizeEvent(event);
+    UpdateScreenPos();
 }
 
 void StartScreenWidget::create_connections() {

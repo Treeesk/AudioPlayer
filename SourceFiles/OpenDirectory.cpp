@@ -35,7 +35,7 @@ void RoundRectPushButton::paintEvent(QPaintEvent* event) {
 
     QString _text = this->text();
     int fontSize = 12;
-    QFont font("Times New Roman", fontSize, QFont::Bold);
+    QFont font("Times New Roman", fontSize, QFont::DemiBold);
     int max_width = width() - 10; // отступы по 5px с каждой стороны
     while (fontSize > 6) {
         font.setPointSize(fontSize);

@@ -5,15 +5,13 @@
 #include <QDebug>
 #include <QString>
 
-TrackInfoWidget::TrackInfoWidget(const int& _width, const int& _height, QWidget *parent): TrackInfoBase(parent) {
-    setFixedSize(_width, _height);
-    time = new TrackTime(sizecover, 15, this);
-    time->setGeometry(0, sizecover + 5, sizecover, 15);
+TrackInfoWidget::TrackInfoWidget(QWidget *parent): TrackInfoBase(parent) {
+    time = new TrackTime(this);
 }
 
 void TrackInfoWidget::paintEvent(QPaintEvent* event) {
     QPainter painter(this);
-    QRect coverRect((width() - sizecover) / 2.0, 0, sizecover, sizecover); // размер 200x200, начало в середина выделенного прос-ва, 0
+    QRect coverRect(0, 0, width(), width());
     painter.setPen(Qt::black);
     painter.setRenderHint(QPainter::Antialiasing);
     if (hasTrack()) {
@@ -21,13 +19,13 @@ void TrackInfoWidget::paintEvent(QPaintEvent* event) {
 
         QFont font("Times New Roman", 16, QFont::DemiBold);
         painter.setFont(font);
-        QRect titleRect(0, sizecover + 25, sizecover, 20);
+        QRect titleRect(0, width() + 25, width(), 20);
         painter.drawText(titleRect, Qt::AlignCenter | Qt::TextWordWrap, getTitle());
 
         font.setPointSize(14);
         font.setWeight(QFont::Normal);
         painter.setFont(font);
-        QRect artistRect(0, sizecover + 50, sizecover, 20);
+        QRect artistRect(0, width() + 50, width(), 20);
         painter.drawText(artistRect, Qt::AlignCenter | Qt::TextWordWrap, getArtist());
     }
 }
@@ -44,9 +42,12 @@ void TrackInfoWidget::initTrack(const track& trk) {
     update();
 }
 
+void TrackInfoWidget::resizeEvent(QResizeEvent* event) {
+    QWidget::resizeEvent(event);
+    time->setGeometry(0, width() + 5, width(), 15);
+}
 
-TrackTime::TrackTime(const int& width, const int& height, QWidget* parent): QWidget(parent){
-    setFixedSize(width, height);
+TrackTime::TrackTime(QWidget* parent): QWidget(parent){
     currenttime = 0;
     slider = new QSlider(Qt::Horizontal, this);
     slider->setRange(0, totaltime * 2);
@@ -122,13 +123,33 @@ void TrackTime::paintEvent(QPaintEvent* event) {
     else {
         past_tense = QString::number(currenttime / 60) + ":" + "0" + QString::number(currenttime % 60);
     }
-    int widthpasttense = painter.fontMetrics().horizontalAdvance(past_tense);
+    int widthpasttense = fm.horizontalAdvance(past_tense);
     timeRect.setRect(0, (height() - heightFont) / 2, widthpasttense, heightFont);
     painter.drawText(timeRect, Qt::AlignRight | Qt::AlignVCenter, past_tense);
-    if (!flag_for_slider_geo) {
-        flag_for_slider_geo = true;
-        slider->setGeometry(widthpasttense + 5, (height() - heightFont + heightFont / 2) / 2 - 1.5, width() - widthtotalTime - widthpasttense - 10, height());
+}
+
+void TrackTime::resizeEvent(QResizeEvent* event) {
+    QWidget::resizeEvent(event);
+    QString past_tense;
+    if (currenttime % 60 / 10 != 0) {
+        past_tense = QString::number(currenttime / 60) + ":" + QString::number(currenttime % 60);
     }
+    else {
+        past_tense = QString::number(currenttime / 60) + ":" + "0" + QString::number(currenttime % 60);
+    }
+    QFontMetrics fm(font());
+    int widthpasttense = fm.horizontalAdvance(past_tense);
+    int heightFont = fm.height();
+
+    QString time_of_track;
+    if (totaltime % 60 / 10 != 0){
+        time_of_track = QString::number(totaltime / 60) + ":" + QString::number(totaltime % 60);
+    }
+    else {
+        time_of_track = QString::number(totaltime / 60) + ":" + "0" + QString::number(totaltime % 60);
+    }
+    int widthtotalTime = fm.horizontalAdvance(time_of_track);
+    slider->setGeometry(widthpasttense + 5, (height() - heightFont + heightFont / 2) / 2 - 1.5, width() - widthtotalTime - widthpasttense - 10, height());
 }
 
 void TrackTime::changetime() {

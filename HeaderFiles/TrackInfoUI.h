@@ -13,14 +13,14 @@ private:
     QTimer* timer;
     QSlider* slider;
     bool launch = false;
-    bool flag_for_slider_geo = false;
     bool seeking = false;
 public:
-    TrackTime(const int& width, const int& height, QWidget *parent = nullptr);
+    TrackTime(QWidget *parent = nullptr);
     void settime(const int& duration);
     void initTime(const int& duration);
 protected:
-    void paintEvent(QPaintEvent* event);
+    void paintEvent(QPaintEvent* event) override;
+    void resizeEvent(QResizeEvent* event) override;
 public slots:
     void changetime();
     void start();
@@ -34,13 +34,12 @@ signals:
 
 class TrackInfoWidget: public TrackInfoBase {
     Q_OBJECT
-private:
-    int sizecover = 200;
 public:
     TrackTime* time;
-    TrackInfoWidget(const int& _width, const int& _height, QWidget *parent = nullptr);
+    TrackInfoWidget(QWidget *parent = nullptr);
 protected:
     void paintEvent(QPaintEvent* event) override;
+    void resizeEvent(QResizeEvent* event) override;
 public slots:
     void setTrack(const track& trk);
     void initTrack(const track& trk);
