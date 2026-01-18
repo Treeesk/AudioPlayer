@@ -59,6 +59,10 @@ void TrackInfoWidget::resizeEvent(QResizeEvent* event) {
     fontSizeforArtist = FontUtils::MaxFontSize(getArtist(), artistRect);
 }
 
+QSize TrackInfoWidget::sizeHint() const{
+    return QSize{coverRect.width(), artistRect.bottom()};
+}
+
 TrackTime::TrackTime(QWidget* parent): QWidget(parent){
     currenttime = 0;
     slider = new QSlider(Qt::Horizontal, this);

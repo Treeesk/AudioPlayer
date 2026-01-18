@@ -46,6 +46,7 @@ private:
 public:
     TrackTime* time;
     TrackInfoWidget(QWidget *parent = nullptr);
+    virtual QSize sizeHint() const override;
 protected:
     void paintEvent(QPaintEvent* event) override;
     void resizeEvent(QResizeEvent* event) override;

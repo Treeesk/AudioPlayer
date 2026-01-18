@@ -10,6 +10,7 @@ PlayerControlsWidget::PlayerControlsWidget(QWidget* parent): QWidget(parent) {
     PlayStopTrack = new RoundPushButton(this);
     NextTrack = new RoundPushButton(this);
     PrevTrack = new RoundPushButton(this);
+
     NextTrack->setIcon(nexttrackIcon);
     NextTrack->setIconSize(QSize(30, 30)); // тест
     NextTrack->setFixedSize(30, 30); // тест
@@ -30,7 +31,6 @@ PlayerControlsWidget::PlayerControlsWidget(QWidget* parent): QWidget(parent) {
     PlayStopTrack->setFixedSize(30, 30); // тест
     PlayStopTrack->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(PlayStopTrack, &QPushButton::toggled, this, &PlayerControlsWidget::PlayStopclick);
-    UpdateButtonsGeo();
     PrevTrack->setToolTip("Предыдущий трек");
     NextTrack->setToolTip("Следующий трек");
     PlayStopTrack->setToolTip("Пауза/Воспроизведение");
@@ -38,21 +38,17 @@ PlayerControlsWidget::PlayerControlsWidget(QWidget* parent): QWidget(parent) {
 
 void PlayerControlsWidget::UpdateButtonsGeo() {
     int spacing = 10;
-    _widthPCW = PlayStopTrack->size().width() + PrevTrack->size().width() + NextTrack->size().width() + spacing * 2;
+    int _widthPCW = PlayStopTrack->size().width() + PrevTrack->size().width() + NextTrack->size().width() + spacing * 2;
     int startX = (width() - _widthPCW) / 2;
-    int startY = (height() - PlayStopTrack->size().height()) / 2;
-    PrevTrack->setGeometry(startX, startY, PrevTrack->size().width(), PrevTrack->size().height());
-    PlayStopTrack->setGeometry(startX + PrevTrack->size().width() + spacing, startY, PlayStopTrack->size().width(), PlayStopTrack->size().height());
-    NextTrack->setGeometry(startX + PrevTrack->size().width() + PlayStopTrack->size().width() + 2 * spacing, startY, NextTrack->size().width(), NextTrack->size().height());
+
+    PrevTrack->setGeometry(startX, 0, PrevTrack->size().width(), PrevTrack->size().height());
+    PlayStopTrack->setGeometry(startX + PrevTrack->size().width() + spacing, 0, PlayStopTrack->size().width(), PlayStopTrack->size().height());
+    NextTrack->setGeometry(startX + PrevTrack->size().width() + PlayStopTrack->size().width() + 2 * spacing, 0, NextTrack->size().width(), NextTrack->size().height());
 }
 
 void PlayerControlsWidget::resizeEvent(QResizeEvent* event) {
     QWidget::resizeEvent(event);
     UpdateButtonsGeo();
-}
-
-int PlayerControlsWidget::WidthPCW() {
-    return _widthPCW;
 }
 
 void PlayerControlsWidget::PlayStopclick(bool isPlaying) {

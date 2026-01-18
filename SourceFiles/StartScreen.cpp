@@ -25,22 +25,22 @@ StartScreenWidget::StartScreenWidget(MusicDataManager* mdm, QWidget* parent): QW
 
 void StartScreenWidget::UpdateScreenPos() {
     int centerX = width() / 2;
-    int verticalSpacing = 1;
+    int verticalSpacing = 5;
     int startY = height() / 4;
 
     int trif_width = width() / 4;
     int trif_height = height() / 3;
+    trif->setGeometry(centerX, startY, trif_width, trif_height);
 
-    int pcwCenterX = centerX + (trif_width - pcw->WidthPCW()) / 2;
-    int pcwY = startY + trif_height + verticalSpacing;
+    int pcwY = startY + trif->sizeHint().height() + verticalSpacing;
     int pcwHeight  = 40;
+    pcw->setGeometry(centerX, pcwY, trif->sizeHint().width(), pcwHeight);
 
     int volY = pcwY + pcwHeight + verticalSpacing;
-
-    trif->setGeometry(centerX, startY, trif_width, trif_height);
-    pcw->setGeometry(pcwCenterX, pcwY, pcw->WidthPCW(), pcwHeight);
     vol->setGeometry(centerX, volY, vol_width, vol_height);
+
     scrollPanel->setGeometry(0, 0, width() / 4, height());
+
     Directory->setGeometry(width() - 80, 10, 70, 35);
 }
 
@@ -81,4 +81,5 @@ void StartScreenWidget::showWidgets() {
     trif->show();
     vol->show();
     scrollPanel->show();
+    UpdateScreenPos();
 }

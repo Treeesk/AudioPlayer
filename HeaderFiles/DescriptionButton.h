@@ -21,11 +21,9 @@ private:
     QIcon stopIcon;
     QIcon nexttrackIcon;
     QIcon prevtrackIcon;
-    int _widthPCW;
     void UpdateButtonsGeo();
 public:
     PlayerControlsWidget(QWidget *parent = nullptr);
-    int WidthPCW();
 protected:
     void resizeEvent(QResizeEvent* event);
 signals:
