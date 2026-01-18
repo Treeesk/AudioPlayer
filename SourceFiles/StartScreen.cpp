@@ -1,13 +1,12 @@
 #include "StartScreen.h"
 #include <QDebug>
 
+
 StartScreenWidget::StartScreenWidget(MusicDataManager* mdm, QWidget* parent): QWidget(parent) {
     _mdm = mdm;
     pcw = new PlayerControlsWidget(this);
     pcw->hide();
 
-    trif_height = 270;
-    trif_width = 200;
     trif = new TrackInfoWidget(this);
     trif->hide();
 
@@ -28,6 +27,9 @@ void StartScreenWidget::UpdateScreenPos() {
     int centerX = width() / 2;
     int verticalSpacing = 1;
     int startY = height() / 4;
+
+    int trif_width = width() / 4;
+    int trif_height = height() / 3;
 
     int pcwCenterX = centerX + (trif_width - pcw->WidthPCW()) / 2;
     int pcwY = startY + trif_height + verticalSpacing;

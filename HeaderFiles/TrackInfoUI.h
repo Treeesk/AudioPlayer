@@ -34,6 +34,15 @@ signals:
 
 class TrackInfoWidget: public TrackInfoBase {
     Q_OBJECT
+private:
+    QRect coverRect;
+    QRect titleRect;
+    QRect artistRect;
+    const int TIMER_HEIGHT = 15;
+    const int SPACING = 5;
+    const int MIN_TEXT = 40;
+    int fontSizeforTitle = 16;
+    int fontSizeforArtist = 14;
 public:
     TrackTime* time;
     TrackInfoWidget(QWidget *parent = nullptr);

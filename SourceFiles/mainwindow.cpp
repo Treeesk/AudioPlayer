@@ -7,7 +7,7 @@ MainWindow::MainWindow(MusicDataManager* mdm, QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
-    ui->setupUi(this);
+   // ui->setupUi(this);
     setMinimumSize(410, 445);
     StartScreenWidget* mainwid = new StartScreenWidget(mdm, this);
     setCentralWidget(mainwid);

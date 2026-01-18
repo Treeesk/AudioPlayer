@@ -4,28 +4,27 @@
 #include <QPainter>
 #include <QDebug>
 #include <QString>
+#include "fontUtils.h"
 
 TrackInfoWidget::TrackInfoWidget(QWidget *parent): TrackInfoBase(parent) {
+    setMinimumSize(200, 270);
     time = new TrackTime(this);
 }
 
 void TrackInfoWidget::paintEvent(QPaintEvent* event) {
     QPainter painter(this);
-    QRect coverRect(0, 0, width(), width());
     painter.setPen(Qt::black);
     painter.setRenderHint(QPainter::Antialiasing);
     if (hasTrack()) {
         painter.drawPixmap(coverRect, getCover());
 
-        QFont font("Times New Roman", 16, QFont::DemiBold);
+        QFont font("Times New Roman", fontSizeforTitle, QFont::Normal);
         painter.setFont(font);
-        QRect titleRect(0, width() + 25, width(), 20);
         painter.drawText(titleRect, Qt::AlignCenter | Qt::TextWordWrap, getTitle());
 
-        font.setPointSize(14);
+        font.setPointSize(fontSizeforArtist);
         font.setWeight(QFont::Normal);
         painter.setFont(font);
-        QRect artistRect(0, width() + 50, width(), 20);
         painter.drawText(artistRect, Qt::AlignCenter | Qt::TextWordWrap, getArtist());
     }
 }
@@ -44,7 +43,20 @@ void TrackInfoWidget::initTrack(const track& trk) {
 
 void TrackInfoWidget::resizeEvent(QResizeEvent* event) {
     QWidget::resizeEvent(event);
-    time->setGeometry(0, width() + 5, width(), 15);
+    int fixed = TIMER_HEIGHT + SPACING * 3 + MIN_TEXT;
+    int coversize = std::min(width(), height() - fixed); // минимум из доступной ширины, или высоты из которой вычитается фиксированная часть
+    coversize = std::max(this->minimumWidth(), coversize); // картинку нужно сделать максимально возможной
+    coverRect = QRect(0, 0, coversize, coversize);
+
+    time->setGeometry(0, coverRect.bottom() + SPACING, coversize, TIMER_HEIGHT);
+
+    int textY = time->geometry().bottom() + SPACING; // откуда начнется текст
+    int textH = height() - textY; // максимальный размер области для текста
+
+    titleRect = QRect(0, textY, coversize, textH / 2 - SPACING / 2);
+    artistRect = QRect(0, textY + textH / 2 + SPACING / 2, coversize, textH / 2 - SPACING / 2);
+    fontSizeforTitle = FontUtils::MaxFontSize(getTitle(), titleRect); // высчитывает максимально возможный шрифт для этой области
+    fontSizeforArtist = FontUtils::MaxFontSize(getArtist(), artistRect);
 }
 
 TrackTime::TrackTime(QWidget* parent): QWidget(parent){

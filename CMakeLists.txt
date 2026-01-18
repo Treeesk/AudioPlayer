@@ -77,6 +77,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         SourceFiles/TrackInfoAbstract.cpp
         HeaderFiles/OpenDirectory.h
         SourceFiles/OpenDirectory.cpp
+        HeaderFiles/fontUtils.h
+        SourceFiles/fontUtils.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET AudioPlayerQt APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
