@@ -1,11 +1,11 @@
 <RCC>
     <qresource prefix="/Resources">
-        <file>Icons/Next.png</file>
-        <file>Icons/Play.png</file>
-        <file>Icons/Prev.png</file>
-        <file>Icons/Stop.png</file>
         <file>Icons/CoverMus.png</file>
-        <file>Icons/VolumeFirst_cropped_v2.png</file>
-        <file>Icons/VolumeThird_cropped_v2.png</file>
+        <file>Icons/Next.svg</file>
+        <file>Icons/Play.svg</file>
+        <file>Icons/Prev.svg</file>
+        <file>Icons/Stop.svg</file>
+        <file>Icons/VolumeFirst_cropped_v2.svg</file>
+        <file>Icons/VolumeThird_cropped_v2.svg</file>
     </qresource>
 </RCC>

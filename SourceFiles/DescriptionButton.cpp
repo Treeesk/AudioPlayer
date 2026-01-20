@@ -3,10 +3,10 @@
 #include <QPainterPath>
 
 PlayerControlsWidget::PlayerControlsWidget(QWidget* parent): QWidget(parent) {
-    playIcon = QIcon(":/Resources/Icons/Play.png");
-    stopIcon = QIcon(":/Resources/Icons/Stop.png");
-    nexttrackIcon = QIcon(":/Resources/Icons/Next.png");
-    prevtrackIcon = QIcon(":/Resources/Icons/Prev.png");
+    playIcon = QIcon(":/Resources/Icons/Play.svg");
+    stopIcon = QIcon(":/Resources/Icons/Stop.svg");
+    nexttrackIcon = QIcon(":/Resources/Icons/Next.svg");
+    prevtrackIcon = QIcon(":/Resources/Icons/Prev.svg");
     PlayStopTrack = new RoundPushButton(this);
     NextTrack = new RoundPushButton(this);
     PrevTrack = new RoundPushButton(this);

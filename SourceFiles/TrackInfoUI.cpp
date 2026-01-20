@@ -18,7 +18,7 @@ void TrackInfoWidget::paintEvent(QPaintEvent* event) {
     if (hasTrack()) {
         painter.drawPixmap(coverRect, getCover());
 
-        QFont font("Times New Roman", fontSizeforTitle, QFont::Normal);
+        QFont font("Times New Roman", fontSizeforTitle, QFont::DemiBold);
         painter.setFont(font);
         painter.drawText(titleRect, Qt::AlignCenter | Qt::TextWordWrap, getTitle());
 

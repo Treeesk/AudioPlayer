@@ -27,7 +27,7 @@ public:
     PlayerControlsWidget(QWidget *parent = nullptr);
     virtual QSize sizeHint() const override;
 protected:
-    void resizeEvent(QResizeEvent* event);
+    void resizeEvent(QResizeEvent* event) override;
 signals:
     void onPlayclicked();
     void onPauseclicked();

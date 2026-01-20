@@ -10,8 +10,8 @@ private:
     QSlider* slider;
     QLabel* lowVol;
     QLabel* highVol;
-    QPixmap baseLowVolPic; // для возможности масштабирования
-    QPixmap baseHighVolPic; // для возможности масштабирования
+    QIcon* lowIcon; // для возможности масштабирования. Icon, чтобы каждый раз снова рендерить свг картинку
+    QIcon* highIcon; // для возможности масштабирования
     void UpdateGeometry();
 public:
     volumeSlider(QWidget* parent = nullptr);
@@ -20,7 +20,7 @@ public slots:
 signals:
     void newVolume(int vol);
 protected:
-    void resizeEvent(QResizeEvent* event);
+    void resizeEvent(QResizeEvent* event) override;
 };
 
 #endif // VOLUMESLIDER_H
