@@ -1,15 +1,15 @@
 #include "VolumeSlider.h"
 
-volumeSlider::volumeSlider(const int& width, const int& height, QWidget* parent): QWidget(parent) {
-    setFixedSize(width, height);
+volumeSlider::volumeSlider(QWidget* parent): QWidget(parent) {
+  //  setFixedSize(width, height);
 
     lowVol = new QLabel(this);
-    lowVol->setPixmap(QIcon(":/Resources/Icons/VolumeFirst_cropped_v2.png").pixmap(height, height));
-    lowVol->setFixedSize(height, height);
+    baseLowVolPic = QPixmap(":/Resources/Icons/VolumeFirst_cropped_v2.png");
+    lowVol->setPixmap(baseLowVolPic);
 
     highVol = new QLabel(this);
-    highVol->setPixmap(QIcon(":/Resources/Icons/VolumeThird_cropped_v2.png").pixmap(height, height));
-    highVol->setFixedSize(height, height);
+    baseHighVolPic = QPixmap(":/Resources/Icons/VolumeThird_cropped_v2.png");
+    highVol->setPixmap(baseHighVolPic);
 
     slider = new QSlider(Qt::Horizontal, this);
     slider->setRange(0, 200);
@@ -65,14 +65,18 @@ void volumeSlider::setnewVolume(int value) {
 }
 
 void volumeSlider::UpdateGeometry() {
-    int size_icon = 20;
+    int size_icon = height();
     int space = 5;
+    lowVol->setPixmap(baseLowVolPic.scaled(size_icon, size_icon, Qt::IgnoreAspectRatio));
     lowVol->setGeometry(0, 0, size_icon, size_icon);
+
     slider->setGeometry(size_icon + space, 0, width() - size_icon * 2 - space * 2, height());
+
+    highVol->setPixmap(baseHighVolPic.scaled(size_icon, size_icon, Qt::IgnoreAspectRatio));
     highVol->setGeometry(width() - size_icon, 0, size_icon, size_icon);
 }
 
 void volumeSlider::resizeEvent(QResizeEvent* event) {
-    UpdateGeometry();
     QWidget::resizeEvent(event);
+    UpdateGeometry();
 }

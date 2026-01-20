@@ -38,7 +38,7 @@ PlayerControlsWidget::PlayerControlsWidget(QWidget* parent): QWidget(parent) {
 
 void PlayerControlsWidget::UpdateButtonsGeo() {
     int spacing = 10;
-    int _widthPCW = PlayStopTrack->size().width() + PrevTrack->size().width() + NextTrack->size().width() + spacing * 2;
+    _widthPCW = PlayStopTrack->size().width() + PrevTrack->size().width() + NextTrack->size().width() + spacing * 2;
     int startX = (width() - _widthPCW) / 2;
 
     PrevTrack->setGeometry(startX, 0, PrevTrack->size().width(), PrevTrack->size().height());
@@ -49,6 +49,10 @@ void PlayerControlsWidget::UpdateButtonsGeo() {
 void PlayerControlsWidget::resizeEvent(QResizeEvent* event) {
     QWidget::resizeEvent(event);
     UpdateButtonsGeo();
+}
+
+QSize PlayerControlsWidget::sizeHint() const {
+    return QSize(_widthPCW, PlayStopTrack->height());
 }
 
 void PlayerControlsWidget::PlayStopclick(bool isPlaying) {

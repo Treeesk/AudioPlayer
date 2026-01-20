@@ -18,10 +18,6 @@ private:
     volumeSlider* vol;
     TrackInfoScroll* scrollPanel;
     OpenDirectoryButton* Directory; // кнопка открытия файлового окна для выбора папки откуда будет проигрываться музыка
-    int trif_width;
-    int trif_height;
-    int vol_width;
-    int vol_height;
     void UpdateScreenPos();
     void create_connections();
 protected:

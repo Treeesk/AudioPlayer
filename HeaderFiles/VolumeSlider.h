@@ -10,9 +10,11 @@ private:
     QSlider* slider;
     QLabel* lowVol;
     QLabel* highVol;
+    QPixmap baseLowVolPic; // для возможности масштабирования
+    QPixmap baseHighVolPic; // для возможности масштабирования
     void UpdateGeometry();
 public:
-    volumeSlider(const int& width, const int& height, QWidget* parent = nullptr);
+    volumeSlider(QWidget* parent = nullptr);
 public slots:
     void setnewVolume(int value);
 signals:

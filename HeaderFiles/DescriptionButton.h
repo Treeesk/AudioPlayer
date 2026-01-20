@@ -22,8 +22,10 @@ private:
     QIcon nexttrackIcon;
     QIcon prevtrackIcon;
     void UpdateButtonsGeo();
+    int _widthPCW;
 public:
     PlayerControlsWidget(QWidget *parent = nullptr);
+    virtual QSize sizeHint() const override;
 protected:
     void resizeEvent(QResizeEvent* event);
 signals:

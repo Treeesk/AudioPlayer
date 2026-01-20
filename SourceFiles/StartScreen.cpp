@@ -10,9 +10,7 @@ StartScreenWidget::StartScreenWidget(MusicDataManager* mdm, QWidget* parent): QW
     trif = new TrackInfoWidget(this);
     trif->hide();
 
-    vol_width = 200;
-    vol_height = 20;
-    vol = new volumeSlider(vol_width, vol_height, this);
+    vol = new volumeSlider(this);
     vol->hide();
 
     scrollPanel = new TrackInfoScroll(this);
@@ -36,12 +34,13 @@ void StartScreenWidget::UpdateScreenPos() {
     int pcwHeight  = 40;
     pcw->setGeometry(centerX, pcwY, trif->sizeHint().width(), pcwHeight);
 
-    int volY = pcwY + pcwHeight + verticalSpacing;
-    vol->setGeometry(centerX, volY, vol_width, vol_height);
+    int volY = pcwY + pcw->sizeHint().height() + verticalSpacing;
+    int vol_height = 20;
+    vol->setGeometry(centerX, volY, trif->sizeHint().width(), vol_height);
 
     scrollPanel->setGeometry(0, 0, width() / 4, height());
 
-    Directory->setGeometry(width() - 80, 10, 70, 35);
+    Directory->setGeometry(width() - 80, 10, 70, 35); // переделать на проценты
 }
 
 void StartScreenWidget::resizeEvent(QResizeEvent* event) {
