@@ -1,10 +1,13 @@
 #include "OpenDirectory.h"
 #include <QPainter>
 #include <QPainterPath>
+#include "fontUtils.h"
 
 OpenDirectoryButton::OpenDirectoryButton(QWidget* parent): QWidget(parent) {
     OpenDir = new RoundRectPushButton(this);
     OpenDir->setText("Выберите папку");
+    OpenDir->setFlat(true);
+    OpenDir->setStyleSheet("QPushButton { border: none; }");
     connect(OpenDir, &QPushButton::clicked, this, &OpenDirectoryButton::button_clicked);
 }
 
@@ -19,14 +22,16 @@ void OpenDirectoryButton::button_clicked() {
 }
 
 void OpenDirectoryButton::resizeEvent(QResizeEvent* event) {
-    OpenDir->setGeometry(0, 0, width(), height());
     QWidget::resizeEvent(event);
+    OpenDir->setGeometry(0, 0, width(), height());
 }
 
 void RoundRectPushButton::paintEvent(QPaintEvent* event) {
     QPainter painter(this);
+    painter.setPen(Qt::NoPen);
     painter.setBrush(Qt::gray);
     painter.setRenderHint(QPainter::Antialiasing); // сглаживание краев
+    setFlat(true);
     double radius = height() / 2.0;
     QPainterPath path;
     QRectF rect = QRectF(0, 0, width(), height());
@@ -34,20 +39,9 @@ void RoundRectPushButton::paintEvent(QPaintEvent* event) {
     painter.drawPath(path);
 
     QString _text = this->text();
-    int fontSize = 12;
+    int fontSize = FontUtils::MaxFontSize(_text, {int(radius), 0, width() - int(radius) * 2, height()});
     QFont font("Times New Roman", fontSize, QFont::DemiBold);
-    int max_width = width() - 10; // отступы по 5px с каждой стороны
-    while (fontSize > 6) {
-        font.setPointSize(fontSize);
-        QFontMetrics fm(font);
-        int currentwidth = fm.horizontalAdvance(_text);
-        if (currentwidth > max_width) {
-            fontSize--;
-        }
-        else {
-            break;
-        }
-    }
+
     painter.setFont(font);
     painter.setPen(Qt::white);
     painter.drawText(rect, Qt::AlignCenter, _text);
