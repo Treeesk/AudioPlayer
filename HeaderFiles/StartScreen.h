@@ -25,7 +25,6 @@ protected:
     void resizeEvent(QResizeEvent* event);
 public slots:
     void showWidgets();
-    void switchflagUseDir();
 };
 
 #endif // STARTSCREEN_H

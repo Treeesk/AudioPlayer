@@ -20,7 +20,6 @@ void OpenDirectoryButton::button_clicked() {
         return;
     }
     emit dirFound(directory_name.toStdString().c_str());
-    emit openDirClicked();
 }
 
 void OpenDirectoryButton::resizeEvent(QResizeEvent* event) {

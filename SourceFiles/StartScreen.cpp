@@ -82,18 +82,13 @@ void StartScreenWidget::create_connections() {
     connect(scrollPanel, &TrackInfoScroll::SetNewTrackPanel, pcw, &PlayerControlsWidget::ChangeIcon); // смена иконки с паузы на проигрывание(если она стояла)
 
     connect(Directory, &OpenDirectoryButton::dirFound, _mdm, &MusicDataManager::loadfromdata); // открытие папки по кнопке и вызов загрузки треков
-    connect(Directory, &OpenDirectoryButton::openDirClicked, this, &StartScreenWidget::switchflagUseDir); // смена размеров и положения кнопки открытия папки
 }
 
 void StartScreenWidget::showWidgets() {
+    flagUseDirButton = true; // папку открыли, нужно изменить положение и размер кнопки
     pcw->show();
     trif->show();
     vol->show();
     scrollPanel->show();
-    UpdateScreenPos();
-}
-
-void StartScreenWidget::switchflagUseDir() {
-    flagUseDirButton = true;
     UpdateScreenPos();
 }
