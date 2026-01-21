@@ -40,7 +40,16 @@ void StartScreenWidget::UpdateScreenPos() {
 
     scrollPanel->setGeometry(0, 0, width() / 4, height());
 
-    Directory->setGeometry(width() - 80, 10, 70, 35); // переделать на проценты
+    if (flagUseDirButton) {
+        Directory->setGeometry(width() - 80, 10, 70, 35); // переделать на проценты
+    }
+    else {
+        int width_button = width() * 0.2;
+        int height_button = height() * 0.1;
+        int startXbutton = width() / 2 - width_button / 2;
+        int startYbutton = height() / 2 - height_button / 2;
+        Directory->setGeometry(startXbutton, startYbutton, width_button, height_button);
+    }
 }
 
 void StartScreenWidget::resizeEvent(QResizeEvent* event) {
@@ -73,6 +82,7 @@ void StartScreenWidget::create_connections() {
     connect(scrollPanel, &TrackInfoScroll::SetNewTrackPanel, pcw, &PlayerControlsWidget::ChangeIcon); // смена иконки с паузы на проигрывание(если она стояла)
 
     connect(Directory, &OpenDirectoryButton::dirFound, _mdm, &MusicDataManager::loadfromdata); // открытие папки по кнопке и вызов загрузки треков
+    connect(Directory, &OpenDirectoryButton::openDirClicked, this, &StartScreenWidget::switchflagUseDir); // смена размеров и положения кнопки открытия папки
 }
 
 void StartScreenWidget::showWidgets() {
@@ -80,5 +90,10 @@ void StartScreenWidget::showWidgets() {
     trif->show();
     vol->show();
     scrollPanel->show();
+    UpdateScreenPos();
+}
+
+void StartScreenWidget::switchflagUseDir() {
+    flagUseDirButton = true;
     UpdateScreenPos();
 }

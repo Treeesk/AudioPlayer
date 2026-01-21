@@ -18,12 +18,14 @@ private:
     volumeSlider* vol;
     TrackInfoScroll* scrollPanel;
     OpenDirectoryButton* Directory; // кнопка открытия файлового окна для выбора папки откуда будет проигрываться музыка
+    bool flagUseDirButton = false;
     void UpdateScreenPos();
     void create_connections();
 protected:
     void resizeEvent(QResizeEvent* event);
 public slots:
     void showWidgets();
+    void switchflagUseDir();
 };
 
 #endif // STARTSCREEN_H

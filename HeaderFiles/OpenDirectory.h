@@ -22,6 +22,7 @@ public slots:
     void button_clicked();
 signals:
     void dirFound(const char* path);
+    void openDirClicked();
 protected:
     void resizeEvent(QResizeEvent* event);
 };
