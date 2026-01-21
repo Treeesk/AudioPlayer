@@ -1,4 +1,4 @@
-#include "VolumeSlider.h"
+#include "UI/VolumeSlider.h"
 
 
 volumeSlider::volumeSlider(QWidget* parent): QWidget(parent) {

@@ -1,6 +1,7 @@
-#include "fontUtils.h"
+#include "Utils/fontUtils.h"
 #include <QFont>
 #include <QFontMetrics>
+#include <QApplication>
 
 namespace FontUtils {
     int MaxFontSize(const QString& text, const QRect& rect) {
@@ -9,7 +10,8 @@ namespace FontUtils {
         int best = left;
         while (left <= right) {
             int mid = (left + right) / 2;
-            QFont font("Times New Roman", mid);
+            QFont font = QApplication::font();
+            font.setPointSize(mid);
             QFontMetrics fm(font);
             int width_test = fm.horizontalAdvance(text); // количество пикселей для этого текст с таким шрифтом
             int height_test = fm.ascent() + fm.descent(); // высота над базовой линией + расстояние вниз от базовой линией

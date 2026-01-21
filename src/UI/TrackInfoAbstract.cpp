@@ -1,4 +1,4 @@
-#include "TrackInfoAbstract.h"
+#include "UI/TrackInfoAbstract.h"
 
 TrackInfoBase::TrackInfoBase(QWidget* parent): QWidget(parent) {
 }

@@ -1,6 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "StartScreen.h"
+#include "UI/StartScreen.h"
 
 #include <QPalette>
 MainWindow::MainWindow(MusicDataManager* mdm, QWidget *parent)

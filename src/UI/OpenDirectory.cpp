@@ -1,7 +1,8 @@
-#include "OpenDirectory.h"
+#include "UI/OpenDirectory.h"
 #include <QPainter>
 #include <QPainterPath>
-#include "fontUtils.h"
+#include "Utils/fontUtils.h"
+#include <QApplication>
 
 OpenDirectoryButton::OpenDirectoryButton(QWidget* parent): QWidget(parent) {
     OpenDir = new RoundRectPushButton(this);
@@ -40,7 +41,9 @@ void RoundRectPushButton::paintEvent(QPaintEvent* event) {
 
     QString _text = this->text();
     int fontSize = FontUtils::MaxFontSize(_text, {int(radius), 0, width() - int(radius) * 2, height()});
-    QFont font("Times New Roman", fontSize, QFont::DemiBold);
+    QFont font = QApplication::font();
+    font.setPointSize(fontSize);
+    font.setWeight(QFont::DemiBold);
 
     painter.setFont(font);
     painter.setPen(Qt::white);

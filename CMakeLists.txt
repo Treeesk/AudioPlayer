@@ -13,25 +13,41 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 set(PROJECT_SOURCES
-    SourceFiles/main.cpp
-    SourceFiles/mainwindow.cpp
-    SourceFiles/track.cpp
-    SourceFiles/DescriptionButton.cpp
-    SourceFiles/StartScreen.cpp
-    SourceFiles/TrackInfoUI.cpp
-    SourceFiles/DataManager.cpp
+    src/main.cpp
+    src/mainwindow.cpp
+    src/track.cpp
+    src/DataManager.cpp
+    src/AudioWrapper.cpp
 
-    HeaderFiles/mainwindow.h
-    HeaderFiles/track.h
-    HeaderFiles/DescriptionButton.h
-    HeaderFiles/StartScreen.h
-    HeaderFiles/TrackInfoUI.h
-    HeaderFiles/DataManager.h
+    src/UI/StartScreen.cpp
+    src/UI/VolumeSlider.cpp
+    src/UI/TrackInfoUI.cpp
+    src/UI/TrackInfoAbstract.cpp
+    src/UI/ScrollBarTracks.cpp
+    src/UI/OpenDirectory.cpp
+    src/UI/DescriptionButton.cpp
+
+    src/utils/fontUtils.cpp
+
+    include/mainwindow.h
+    include/track.h
+    include/DataManager.h
+    include/AudioWrapper.h
+
+    include/UI/VolumeSlider.h
+    include/UI/TrackInfoUI.h
+    include/UI/StartScreen.h
+    include/UI/TrackInfoAbstract.h
+    include/UI/ScrollBarTracks.h
+    include/UI/OpenDirectory.h
+    include/UI/DescriptionButton.h
+
+    include/utils/fontUtils.h
 
     Forms/mainwindow.ui
-
     Resources/resources.qrc
 )
+
 
 set(CMAKE_AUTOUIC_SEARCH_PATHS
     ${CMAKE_CURRENT_SOURCE_DIR}/Forms
@@ -67,18 +83,6 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(AudioPlayerQt
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
-        HeaderFiles/AudioWrapper.h
-        SourceFiles/AudioWrapper.cpp
-        HeaderFiles/VolumeSlider.h
-        SourceFiles/VolumeSlider.cpp
-        HeaderFiles/ScrollBarTracks.h
-        SourceFiles/ScrollBarTracks.cpp
-        HeaderFiles/TrackInfoAbstract.h
-        SourceFiles/TrackInfoAbstract.cpp
-        HeaderFiles/OpenDirectory.h
-        SourceFiles/OpenDirectory.cpp
-        HeaderFiles/fontUtils.h
-        SourceFiles/fontUtils.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET AudioPlayerQt APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -98,7 +102,9 @@ else()
     endif()
 endif()
 # подключение header папки к source файлам проекта
-target_include_directories(AudioPlayerQt PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/HeaderFiles)
+target_include_directories(AudioPlayerQt PRIVATE
+    ${CMAKE_SOURCE_DIR}/include
+)
 
 # линковка и подключение header файлов и библиотек к core_lib и соответ. к audioplayerqt
 target_include_directories(core_lib PUBLIC

@@ -1,10 +1,11 @@
-#include "TrackInfoUI.h"
+#include "UI/TrackInfoUI.h"
 #include <QImage>
 #include <QPixmap>
 #include <QPainter>
 #include <QDebug>
 #include <QString>
-#include "fontUtils.h"
+#include "Utils/fontUtils.h"
+#include <QApplication>
 
 TrackInfoWidget::TrackInfoWidget(QWidget *parent): TrackInfoBase(parent) {
     setMinimumSize(200, 270);
@@ -18,7 +19,9 @@ void TrackInfoWidget::paintEvent(QPaintEvent* event) {
     if (hasTrack()) {
         painter.drawPixmap(coverRect, getCover());
 
-        QFont font("Times New Roman", fontSizeforTitle, QFont::DemiBold);
+        QFont font = QApplication::font();
+        font.setPointSize(fontSizeforTitle);
+        font.setWeight(QFont::DemiBold);
         painter.setFont(font);
         painter.drawText(titleRect, Qt::AlignCenter | Qt::TextWordWrap, getTitle());
 

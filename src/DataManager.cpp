@@ -1,7 +1,7 @@
 #include "DataManager.h"
 #include <iostream>
 #include "AudioFileLoader.h"
-#include "TrackInfoUI.h"
+#include "UI/TrackInfoUI.h"
 
 MusicDataManager::MusicDataManager(QObject* parent): QObject(parent) {
     worker = new AudioWorker();
