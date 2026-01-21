@@ -44,7 +44,7 @@ void StartScreenWidget::UpdateScreenPos() {
         Directory->setGeometry(width() - 80, 10, 70, 35); // переделать на проценты
     }
     else {
-        int width_button = width() * 0.2;
+        int width_button = width() * 0.3;
         int height_button = height() * 0.1;
         int startXbutton = width() / 2 - width_button / 2;
         int startYbutton = height() / 2 - height_button / 2;

@@ -30,7 +30,6 @@ void RoundRectPushButton::paintEvent(QPaintEvent* event) {
     painter.setPen(Qt::NoPen);
     painter.setBrush(Qt::gray);
     painter.setRenderHint(QPainter::Antialiasing); // сглаживание краев
-    setFlat(true);
     double radius = height() / 2.0;
     QPainterPath path;
     QRectF rect = QRectF(0, 0, width(), height());
