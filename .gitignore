@@ -7,7 +7,6 @@
 /.idea/
 .DS_Store
 /.vscode
-/testingmp3mus
 # Editor-based HTTP Client requests
 /httpRequests/
 # Datasource local storage ignored files
