@@ -16,6 +16,9 @@ void OpenDirectoryButton::button_clicked() {
         "/Applications",
         QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks
         );
+    if (directory_name.isEmpty()) {
+        return;
+    }
     emit dirFound(directory_name.toStdString().c_str());
     emit openDirClicked();
 }
