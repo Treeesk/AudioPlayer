@@ -39,19 +39,6 @@ All audio tracks and album covers shown in screenshots are used for demonstratio
   (The project uses CoreAudio / AudioToolbox)
 
 ---
-
-### Prebuilt Release (recommended)
-
-If you only want to run the application, download the latest prebuilt version from the **Releases** page.
-
-1. Download `AudioPlayerQt-macOS.zip`
-2. Unzip the archive
-3. Run `AudioPlayerQt.app`
-
-> On first launch, macOS may warn about an unknown developer.  
-> Go to **System Settings → Privacy & Security** and allow the application to run.
-
----
 ### Install
 ```bash 
 brew install qt ffmpeg taglib cmake 
